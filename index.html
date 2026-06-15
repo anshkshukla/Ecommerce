@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShopSphere Premium E-Commerce Sandbox</title>
+  <title>ANSHKART Premium E-Commerce Sandbox</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -85,13 +85,13 @@
        CORE DATA & APPLICATION LOGIC ENGINE
        ========================================== -->
   <script>
-    // Initial products with affordable Indian Rupee pricing
+    // Initial 39 products set corresponding to previous catalog but updated to Rupee pricing + 8 new products
     const INITIAL_PRODUCTS = [
       {
         id: 1,
         title: "Quantum Sound Pro ANC Headphones",
         category: "Electronics",
-        price: 2499.00,
+        price: 1999.00,
         discount: 15,
         rating: 4.8,
         reviewsCount: 124,
@@ -111,7 +111,7 @@
         id: 2,
         title: "VividView 27\" QHD IPS Monitor",
         category: "Electronics",
-        price: 14999.00,
+        price: 9999.00,
         discount: 10,
         rating: 4.6,
         reviewsCount: 89,
@@ -127,7 +127,7 @@
         id: 3,
         title: "SleekBook Carbon Pro 14\"",
         category: "Electronics",
-        price: 45999.00,
+        price: 39999.00,
         discount: 8,
         rating: 4.9,
         reviewsCount: 45,
@@ -143,7 +143,7 @@
         id: 4,
         title: "AeroCharge MagSafe Powerbank 10k",
         category: "Electronics",
-        price: 999.00,
+        price: 799.00,
         discount: 20,
         rating: 4.3,
         reviewsCount: 204,
@@ -159,7 +159,7 @@
         id: 5,
         title: "ChronoFit Active Smartwatch",
         category: "Electronics",
-        price: 1999.00,
+        price: 1499.00,
         discount: 25,
         rating: 4.5,
         reviewsCount: 312,
@@ -175,7 +175,7 @@
         id: 6,
         title: "Urban Knit Classic Crewneck",
         category: "Fashion",
-        price: 799.00,
+        price: 699.00,
         discount: 30,
         rating: 4.4,
         reviewsCount: 95,
@@ -191,7 +191,7 @@
         id: 7,
         title: "BreezeWalk Mesh Sneakers",
         category: "Fashion",
-        price: 1199.00,
+        price: 999.00,
         discount: 15,
         rating: 4.7,
         reviewsCount: 152,
@@ -207,7 +207,7 @@
         id: 8,
         title: "Explorer Waterproof Trail Pack",
         category: "Fashion",
-        price: 1499.00,
+        price: 1199.00,
         discount: 10,
         rating: 4.6,
         reviewsCount: 64,
@@ -223,7 +223,7 @@
         id: 9,
         title: "Apex Polarized Aviator Sunglasses",
         category: "Fashion",
-        price: 599.00,
+        price: 499.00,
         discount: 40,
         rating: 4.2,
         reviewsCount: 77,
@@ -239,7 +239,7 @@
         id: 10,
         title: "Heritage Genuine Leather Belt",
         category: "Fashion",
-        price: 399.00,
+        price: 299.00,
         discount: 5,
         rating: 4.8,
         reviewsCount: 112,
@@ -255,7 +255,7 @@
         id: 11,
         title: "The Code Architect: Clean Systems Design",
         category: "Books",
-        price: 499.00,
+        price: 399.00,
         discount: 12,
         rating: 4.9,
         reviewsCount: 88,
@@ -271,7 +271,7 @@
         id: 12,
         title: "Elysium: Future of Neural Networks",
         category: "Books",
-        price: 299.00,
+        price: 249.00,
         discount: 15,
         rating: 4.5,
         reviewsCount: 140,
@@ -303,7 +303,7 @@
         id: 14,
         title: "AromaPress Espresso Maker",
         category: "Home & Kitchen",
-        price: 3499.00,
+        price: 2999.00,
         discount: 20,
         rating: 4.7,
         reviewsCount: 180,
@@ -320,7 +320,7 @@
         id: 15,
         title: "GlowGlow Ambient Air Purifier",
         category: "Home & Kitchen",
-        price: 2199.00,
+        price: 3499.00,
         discount: 10,
         rating: 4.6,
         reviewsCount: 92,
@@ -336,7 +336,7 @@
         id: 16,
         title: "ChefVibe 8-Piece Cookware Set",
         category: "Home & Kitchen",
-        price: 1899.00,
+        price: 1999.00,
         discount: 15,
         rating: 4.8,
         reviewsCount: 74,
@@ -368,7 +368,7 @@
         id: 18,
         title: "Apex Carbon Fiber Road Bike",
         category: "Sports",
-        price: 24999.00,
+        price: 14999.00,
         discount: 10,
         rating: 4.9,
         reviewsCount: 32,
@@ -384,7 +384,7 @@
         id: 19,
         title: "ThermoShield Dual-Wall Flask 40oz",
         category: "Sports",
-        price: 499.00,
+        price: 399.00,
         discount: 20,
         rating: 4.7,
         reviewsCount: 380,
@@ -400,7 +400,7 @@
         id: 20,
         title: "FlexiFit TPE Eco Fitness Mat",
         category: "Sports",
-        price: 349.00,
+        price: 249.00,
         discount: 5,
         rating: 4.5,
         reviewsCount: 144,
@@ -416,7 +416,7 @@
         id: 21,
         title: "VenturePro 3-Season 4-Person Tent",
         category: "Sports",
-        price: 2999.00,
+        price: 1799.00,
         discount: 15,
         rating: 4.6,
         reviewsCount: 55,
@@ -449,7 +449,7 @@
         id: 23,
         title: "PureSilk Ionic Hair Dryer",
         category: "Beauty",
-        price: 1199.00,
+        price: 899.00,
         discount: 10,
         rating: 4.6,
         reviewsCount: 88,
@@ -481,7 +481,7 @@
         id: 25,
         title: "LumbarRelief Mesh Office Chair",
         category: "Home & Kitchen",
-        price: 4499.00,
+        price: 3999.00,
         discount: 12,
         rating: 4.6,
         reviewsCount: 110,
@@ -511,9 +511,9 @@
       },
       {
         id: 27,
-        title: "Apex Pro Carbon Tennis Racket",
+        title: "Apex Pro Tennis Racket",
         category: "Sports",
-        price: 1799.00,
+        price: 1299.00,
         discount: 15,
         rating: 4.7,
         reviewsCount: 46,
@@ -529,7 +529,7 @@
         id: 28,
         title: "VividColor Artist Marker Set",
         category: "Books",
-        price: 449.00,
+        price: 399.00,
         discount: 10,
         rating: 4.5,
         reviewsCount: 84,
@@ -545,7 +545,7 @@
         id: 29,
         title: "BioDermal Clay Mask",
         category: "Beauty",
-        price: 249.00,
+        price: 199.00,
         discount: 15,
         rating: 4.3,
         reviewsCount: 167,
@@ -561,7 +561,7 @@
         id: 30,
         title: "Urban Shield Winter Windbreaker",
         category: "Fashion",
-        price: 1299.00,
+        price: 999.00,
         discount: 25,
         rating: 4.6,
         reviewsCount: 89,
@@ -577,7 +577,7 @@
         id: 31,
         title: "HydroGlow Overnight Moisturizer",
         category: "Beauty",
-        price: 399.00,
+        price: 299.00,
         discount: 20,
         rating: 4.8,
         reviewsCount: 103,
@@ -587,6 +587,136 @@
         stock: 19,
         brand: "BioDermal",
         isFeatured: false,
+        reviews: []
+      },
+      // Added Products for affordable expansion
+      {
+        id: 32,
+        title: "Astra Wireless Ergonomic Mouse",
+        category: "Electronics",
+        price: 499.00,
+        discount: 10,
+        rating: 4.5,
+        reviewsCount: 67,
+        image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=600&auto=format&fit=crop&q=80",
+        description: "Highly responsive wireless mouse designed with a contoured shape for maximum comfort and productive precision clicks.",
+        specs: { "DPI": "1600 Max", "Interface": "2.4GHz USB Receiver", "Battery": "1 AA Required" },
+        stock: 50,
+        brand: "Astra",
+        isFeatured: true,
+        reviews: []
+      },
+      {
+        id: 33,
+        title: "ComfyGrip Orthopedic Seat Cushion",
+        category: "Home & Kitchen",
+        price: 699.00,
+        discount: 15,
+        rating: 4.7,
+        reviewsCount: 42,
+        image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&auto=format&fit=crop&q=80",
+        description: "Perfect support for your home workspace or car seat. Helps reduce spinal pressure and back pain during long sitting hours.",
+        specs: { "Core Material": "Premium Memory Foam", "Cover": "Breathable Mesh" },
+        stock: 35,
+        brand: "ComfyGrip",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 34,
+        title: "EcoLeaf Bamboo Water Bottle",
+        category: "Sports",
+        price: 249.00,
+        discount: 5,
+        rating: 4.4,
+        reviewsCount: 88,
+        image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&auto=format&fit=crop&q=80",
+        description: "Beautifully styled eco-friendly bamboo flask with a stainless steel core to preserve your beverage temperature for hours.",
+        specs: { "Capacity": "500ml", "Shell": "Natural Bamboo", "Core": "304 Stainless Steel" },
+        stock: 60,
+        brand: "EcoLeaf",
+        isFeatured: false,
+        isBestSeller: true,
+        reviews: []
+      },
+      {
+        id: 35,
+        title: "Nordic Ceramic Coffee Mug Set",
+        category: "Home & Kitchen",
+        price: 349.00,
+        discount: 12,
+        rating: 4.6,
+        reviewsCount: 31,
+        image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80",
+        description: "Elegant pair of hand-glazed ceramic mugs with minimalist Nordic design accents, perfect for morning tea or coffee.",
+        specs: { "Volume": "350ml each", "Count": "Set of 2 Mugs" },
+        stock: 18,
+        brand: "NordicWare",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 36,
+        title: "PureGlow Himalayan Salt Lamp",
+        category: "Home & Kitchen",
+        price: 499.00,
+        discount: 15,
+        rating: 4.5,
+        reviewsCount: 112,
+        image: "https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=600&auto=format&fit=crop&q=80",
+        description: "Hand-carved premium salt crystals emit a warm, relaxing orange glow that cleanses surrounding workspace air molecules naturally.",
+        specs: { "Weight": "2-3 kg", "Base": "Polished Neem Wood", "Bulb": "15W Incandescent" },
+        stock: 22,
+        brand: "PureGlow",
+        isFeatured: true,
+        reviews: []
+      },
+      {
+        id: 37,
+        title: "ZenVibe Lavender Candles (Set of 4)",
+        category: "Home & Kitchen",
+        price: 299.00,
+        discount: 8,
+        rating: 4.7,
+        reviewsCount: 94,
+        image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&auto=format&fit=crop&q=80",
+        description: "Slow-burning soy wax candles infused with natural lavender therapeutic essential oils to relieve built-up stress.",
+        specs: { "Wax": "100% Organic Soy", "Burn Time": "15 Hours per candle" },
+        stock: 45,
+        brand: "ZenVibe",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 38,
+        title: "QuickDry Microfiber Sports Towel",
+        category: "Sports",
+        price: 149.00,
+        discount: 20,
+        rating: 4.3,
+        reviewsCount: 145,
+        image: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=600&auto=format&fit=crop&q=80",
+        description: "Super absorbent, ultra-compact microfiber workout towel that dries up to 3 times faster than normal cotton varieties.",
+        specs: { "Size": "40 x 80 cm", "Material": "80% Polyester, 20% Nylon" },
+        stock: 80,
+        brand: "FlexiFit",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 39,
+        title: "GlowMatte Waterproof Lipstick Set",
+        category: "Beauty",
+        price: 299.00,
+        discount: 10,
+        rating: 4.5,
+        reviewsCount: 76,
+        image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600&auto=format&fit=crop&q=80",
+        description: "Long-lasting matte liquid lipsticks containing moisturizing Vitamin E. Features 3 beautiful shades for everyday style.",
+        specs: { "Quantity": "Pack of 3", "Finish": "True Velvet Matte", "Durability": "12-Hour Smudgeproof" },
+        stock: 30,
+        brand: "GlowTherapy",
+        isFeatured: true,
         reviews: []
       }
     ];
@@ -603,16 +733,16 @@
       wishlist: JSON.parse(localStorage.getItem('ss_wishlist')) || [],
       currentUser: JSON.parse(localStorage.getItem('ss_user')) || null,
       addresses: JSON.parse(localStorage.getItem('ss_addresses')) || [
-        { id: '1', type: 'Home', name: 'Rahul Sharma', line1: 'Sector 62, Noida', city: 'Delhi NCR', zip: '201301', phone: '+91 98765 43210' }
+        { id: '1', type: 'Home', name: 'John Doe', line1: '42 Wallaby Way', city: 'Sydney', zip: '2000', phone: '+1 (555) 0199' }
       ],
       orders: JSON.parse(localStorage.getItem('ss_orders')) || [
         {
           id: 'ORD-94819',
           date: '2026-06-01',
-          total: 2499.00,
+          total: 1999.00,
           status: 'Delivered',
           items: [
-            { id: 1, title: 'Quantum Sound Pro ANC Headphones', price: 2499.00, quantity: 1 }
+            { id: 1, title: 'Quantum Sound Pro ANC Headphones', price: 1999.00, quantity: 1 }
           ]
         }
       ],
@@ -623,10 +753,10 @@
       view: 'home', // 'home' | 'shop' | 'product-detail' | 'cart' | 'checkout' | 'wishlist' | 'profile' | 'compare' | 'admin'
       activeProductId: 1,
       
-      // Shop view filter states (Scale price ranges to accommodate Rupee range)
+      // Shop view filter states
       searchTerm: '',
       selectedCategory: 'All',
-      priceRange: [0, 50000],
+      priceRange: [0, 45000],
       selectedBrand: 'All',
       minRating: 0,
       sortBy: 'popular', // low-high, high-low, newest, popular
@@ -864,7 +994,7 @@
                 <i data-lucide="shopping-bag" class="w-6 h-6"></i>
               </div>
               <span class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-indigo-600 to-indigo-400 bg-clip-text text-transparent dark:from-white dark:to-slate-300">
-                ShopSphere
+                ANSHKART
               </span>
             </div>
 
@@ -937,10 +1067,10 @@
               <div class="p-2 bg-indigo-600 rounded-lg">
                 <i data-lucide="shopping-bag" class="w-5 h-5 text-white"></i>
               </div>
-              <span class="text-lg font-black tracking-tight">ShopSphere</span>
+              <span class="text-lg font-black tracking-tight">ANSHKART</span>
             </div>
             <p class="text-xs leading-relaxed">
-              Pioneering modern e-commerce through responsive catalog matrices, custom checkout options, and seamless customer support services.
+              Pioneering modern affordable e-commerce through responsive catalog matrices, custom checkout options, and seamless customer support services.
             </p>
           </div>
           <div class="space-y-3">
@@ -969,7 +1099,7 @@
           </div>
         </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mt-12 border-t border-slate-900 text-center text-xs text-slate-500">
-          © 2026 ShopSphere Premium Ecosystem. Built for seamless professional client engagement.
+          © 2026 ANSHKART Ecosystem. Built for seamless professional client engagement.
         </div>
       `;
       lucide.createIcons();
@@ -1012,8 +1142,8 @@
 
             <div class="space-y-3">
               <div class="flex items-baseline gap-2">
-                <span class="text-base sm:text-lg font-black text-slate-900 dark:text-white">₹${finalPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                ${p.discount > 0 ? `<span class="text-xs text-slate-400 dark:text-slate-500 line-through">₹${p.price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>` : ''}
+                <span class="text-base sm:text-lg font-black text-slate-900 dark:text-white">₹${finalPrice.toFixed(2)}</span>
+                ${p.discount > 0 ? `<span class="text-xs text-slate-400 dark:text-slate-500 line-through">₹${p.price.toFixed(2)}</span>` : ''}
               </div>
               <button onclick="appActions.addToCart(${p.id})" ${p.stock <= 0 ? 'disabled' : ''} class="w-full py-2.5 bg-slate-950 text-white dark:bg-white dark:text-slate-950 rounded-xl text-xs font-bold hover:bg-indigo-600 dark:hover:bg-indigo-50 hover:text-white dark:hover:text-slate-950 transition-colors flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-40">
                 <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Add To Cart
@@ -1279,7 +1409,7 @@
               </div>
               <div class="w-full sm:w-40 flex flex-col justify-center space-y-3">
                 <div>
-                  <div class="text-xl font-black text-slate-900 dark:text-white">₹${finalP.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div class="text-xl font-black text-slate-900 dark:text-white">₹${finalP.toFixed(2)}</div>
                   ${p.discount > 0 ? `<span class="text-xs text-rose-500 font-bold bg-rose-50 dark:bg-rose-950/40 px-1.5 py-0.5 rounded">-${p.discount}%</span>` : ''}
                 </div>
                 <button onclick="appActions.viewProductDetail(${p.id})" class="w-full py-2 bg-slate-900 dark:bg-white dark:text-slate-950 text-white font-bold rounded-xl text-xs hover:bg-indigo-600 transition-colors">
@@ -1337,12 +1467,12 @@
               <div class="space-y-2">
                 <div class="flex items-center justify-between">
                   <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Max Price</label>
-                  <span class="text-sm font-bold text-slate-800 dark:text-white">₹${state.priceRange[1].toLocaleString('en-IN')}</span>
+                  <span class="text-sm font-bold text-slate-800 dark:text-white">₹${state.priceRange[1]}</span>
                 </div>
                 <input 
                   type="range" 
                   min="0" 
-                  max="50000" 
+                  max="45000" 
                   step="500"
                   value="${state.priceRange[1]}" 
                   oninput="state.priceRange=[0, parseFloat(this.value)]; renderActiveView()"
@@ -1425,7 +1555,7 @@
     function clearAllFilters() {
       state.searchTerm = '';
       state.selectedCategory = 'All';
-      state.priceRange = [0, 50000];
+      state.priceRange = [0, 45000];
       state.selectedBrand = 'All';
       state.minRating = 0;
       state.sortBy = 'popular';
@@ -1508,9 +1638,9 @@
 
               <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
                 <div class="flex items-baseline gap-3">
-                  <span class="text-3xl font-black text-slate-950 dark:text-white">₹${finalPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <span class="text-3xl font-black text-slate-950 dark:text-white">₹${finalPrice.toFixed(2)}</span>
                   ${activeProduct.discount > 0 ? `
-                    <span class="text-base text-slate-400 line-through">₹${activeProduct.price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <span class="text-base text-slate-400 line-through">₹${activeProduct.price.toFixed(2)}</span>
                     <span class="text-xs font-bold text-rose-500">(${activeProduct.discount}% Off)</span>
                   ` : ''}
                 </div>
@@ -1672,7 +1802,7 @@
 
       const subtotal = state.cart.reduce((acc, curr) => acc + (curr.price * (1 - curr.discount / 100)) * curr.quantity, 0);
       const tax = subtotal * 0.08;
-      const isFreeShip = subtotal > 1999 || (state.appliedPromo && state.appliedPromo.freeShipping);
+      const isFreeShip = subtotal > 999 || (state.appliedPromo && state.appliedPromo.freeShipping);
       const shipping = subtotal > 0 && !isFreeShip ? 99.00 : 0.00;
       const promoDiscount = (state.appliedPromo && state.appliedPromo.discountPercent) ? subtotal * (state.appliedPromo.discountPercent / 100) : 0;
       const grandTotal = subtotal + tax + shipping - promoDiscount;
@@ -1688,8 +1818,8 @@
                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${item.category}</span>
                 <h4 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base line-clamp-1">${item.title}</h4>
                 <div class="flex items-baseline gap-2">
-                  <span class="font-extrabold text-slate-900 dark:text-white">₹${itemPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                  ${item.discount > 0 ? `<span class="text-[10px] text-rose-500 line-through">₹${item.price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>` : ''}
+                  <span class="font-extrabold text-slate-900 dark:text-white">₹${itemPrice.toFixed(2)}</span>
+                  ${item.discount > 0 ? `<span class="text-[10px] text-rose-500 line-through">₹${item.price.toFixed(2)}</span>` : ''}
                 </div>
               </div>
             </div>
@@ -1706,7 +1836,7 @@
               </div>
 
               <div class="text-right flex items-center sm:flex-col gap-2">
-                <span class="text-sm font-black text-slate-950 dark:text-white">₹${(itemPrice * item.quantity).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <span class="text-sm font-black text-slate-950 dark:text-white">₹${(itemPrice * item.quantity).toFixed(2)}</span>
                 <button onclick="appActions.removeFromCart(${item.id})" class="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-xl">
                   <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
@@ -1730,11 +1860,11 @@
                 <div class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
                   <div class="flex justify-between">
                     <span>Subtotal</span>
-                    <span class="font-bold text-slate-900 dark:text-white">₹${subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                    <span class="font-bold text-slate-900 dark:text-white">₹${subtotal.toFixed(2)}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span>Estimated GST (8%)</span>
-                    <span class="font-bold text-slate-900 dark:text-white">₹${tax.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                    <span>Estimated Tax (8%)</span>
+                    <span class="font-bold text-slate-900 dark:text-white">₹${tax.toFixed(2)}</span>
                   </div>
                   <div class="flex justify-between">
                     <span>Shipping Transit</span>
@@ -1743,7 +1873,7 @@
                   ${state.appliedPromo ? `
                     <div class="flex justify-between text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/40 p-2.5 rounded-lg text-xs">
                       <span>Discount Code Applied (${state.appliedPromo.code}):</span>
-                      <span>-₹${promoDiscount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                      <span>-₹${promoDiscount.toFixed(2)}</span>
                     </div>
                   ` : ''}
                 </div>
@@ -1759,7 +1889,7 @@
 
                 <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-between items-baseline">
                   <span class="font-bold text-slate-900 dark:text-white text-base">Grand Total</span>
-                  <span class="font-black text-slate-950 dark:text-white text-2xl">₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                  <span class="font-black text-slate-950 dark:text-white text-2xl">₹${grandTotal.toFixed(2)}</span>
                 </div>
 
                 <button onclick="appActions.setView('checkout')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-transform active:scale-95 shadow-lg shadow-indigo-600/20 uppercase tracking-wider">
@@ -1773,11 +1903,11 @@
     }
 
     // 5. CHECKOUT VIEWS BLOCK
-    let paymentMethod = 'upi'; // Global active checkout payment flag default UPI
+    let paymentMethod = 'card'; // Global active checkout payment flag
     function renderCheckout(container) {
       const subtotal = state.cart.reduce((acc, curr) => acc + (curr.price * (1 - curr.discount / 100)) * curr.quantity, 0);
       const tax = subtotal * 0.08;
-      const isFreeShip = subtotal > 1999 || (state.appliedPromo && state.appliedPromo.freeShipping);
+      const isFreeShip = subtotal > 999 || (state.appliedPromo && state.appliedPromo.freeShipping);
       const shipping = subtotal > 0 && !isFreeShip ? 99.00 : 0.00;
       const promoDiscount = (state.appliedPromo && state.appliedPromo.discountPercent) ? subtotal * (state.appliedPromo.discountPercent / 100) : 0;
       const grandTotal = subtotal + tax + shipping - promoDiscount;
@@ -1820,18 +1950,18 @@
                   <i data-lucide="shield" class="w-5 h-5 text-indigo-600"></i> Secure Payment Gateway
                 </h3>
                 <div class="flex flex-col sm:flex-row gap-4">
-                  <button onclick="switchPaymentMethod('upi')" class="flex-1 p-4 border rounded-xl flex items-center gap-3 bg-white dark:bg-slate-800 ${paymentMethod === 'upi' ? 'border-indigo-600 ring-1 ring-indigo-500' : 'border-slate-200 dark:border-slate-700'}">
-                    <span class="text-lg">📱</span>
-                    <div class="text-left">
-                      <div class="text-sm font-bold text-slate-900 dark:text-white">UPI Gateway</div>
-                      <div class="text-[10px] text-slate-400">GPay, PhonePe, Paytm</div>
-                    </div>
-                  </button>
                   <button onclick="switchPaymentMethod('card')" class="flex-1 p-4 border rounded-xl flex items-center gap-3 bg-white dark:bg-slate-800 ${paymentMethod === 'card' ? 'border-indigo-600 ring-1 ring-indigo-500' : 'border-slate-200 dark:border-slate-700'}">
                     <span class="text-lg">💳</span>
                     <div class="text-left">
                       <div class="text-sm font-bold text-slate-900 dark:text-white">Credit / Debit Card</div>
-                      <div class="text-[10px] text-slate-400">Visa, Mastercard, RuPay</div>
+                      <div class="text-[10px] text-slate-400">Visa, Mastercard, Amex</div>
+                    </div>
+                  </button>
+                  <button onclick="switchPaymentMethod('upi')" class="flex-1 p-4 border rounded-xl flex items-center gap-3 bg-white dark:bg-slate-800 ${paymentMethod === 'upi' ? 'border-indigo-600 ring-1 ring-indigo-500' : 'border-slate-200 dark:border-slate-700'}">
+                    <span class="text-lg">📱</span>
+                    <div class="text-left">
+                      <div class="text-sm font-bold text-slate-900 dark:text-white">UPI Gateway</div>
+                      <div class="text-[10px] text-slate-400">GPay, PhonePe</div>
                     </div>
                   </button>
                 </div>
@@ -1858,14 +1988,14 @@
                 ${state.cart.map(item => `
                   <div class="flex gap-3 justify-between items-center text-xs text-slate-600 dark:text-slate-300">
                     <span class="truncate flex-1 font-semibold">${item.title} <span class="text-slate-400">x${item.quantity}</span></span>
-                    <span class="font-extrabold text-slate-900 dark:text-white">₹${((item.price * (1 - item.discount / 100)) * item.quantity).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                    <span class="font-extrabold text-slate-900 dark:text-white">₹${((item.price * (1 - item.discount / 100)) * item.quantity).toFixed(2)}</span>
                   </div>
                 `).join('')}
               </div>
 
               <div class="border-t border-slate-200 dark:border-slate-700 pt-4 flex justify-between items-baseline">
                 <span class="font-bold text-slate-900 dark:text-white text-sm">Total</span>
-                <span class="font-black text-slate-950 dark:text-white text-xl">₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                <span class="font-black text-slate-950 dark:text-white text-xl">₹${grandTotal.toFixed(2)}</span>
               </div>
 
               <button onclick="handlePlaceOrder()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow-md uppercase tracking-wider">
@@ -1961,18 +2091,18 @@
             <div class="bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-8 rounded-3xl space-y-6 shadow-xl">
               <div class="text-center space-y-2">
                 <div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 rounded-full flex items-center justify-center mx-auto text-xl">🛡️</div>
-                <h2 class="text-2xl font-black text-slate-950 dark:text-white">Sign In To Sphere</h2>
+                <h2 class="text-2xl font-black text-slate-950 dark:text-white">Sign In To ANSHKART</h2>
                 <p class="text-xs text-slate-400">Enter credentials to monitor stats or edit database catalogs</p>
               </div>
 
               <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
                 <div class="space-y-1.5">
                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Email Address</label>
-                  <input id="auth-email" type="email" placeholder="customer@example.com (or admin@example.com)" class="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg text-xs" required>
+                  <input id="auth-email" type="email" placeholder="customer@example.com (or admin@example.com)" class="w-full p-2.5 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-xs" required>
                 </div>
                 <div class="space-y-1.5">
                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Password</label>
-                  <input id="auth-password" type="password" placeholder="••••••••" class="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg text-xs" required>
+                  <input id="auth-password" type="password" placeholder="••••••••" class="w-full p-2.5 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-xs" required>
                 </div>
                 <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-lg">Authenticate Credentials</button>
               </form>
@@ -2006,7 +2136,7 @@
               ${(o.items || []).map(it => `
                 <div class="flex justify-between items-center text-xs">
                   <span class="font-semibold text-slate-700 dark:text-slate-300">${it.title} <code class="text-slate-400">x${it.quantity}</code></span>
-                  <span class="font-extrabold text-slate-950 dark:text-white">₹${it.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                  <span class="font-extrabold text-slate-950 dark:text-white">₹${it.price.toFixed(2)}</span>
                 </div>
               `).join('')}
             </div>
@@ -2028,7 +2158,7 @@
                   <h3 class="font-extrabold text-slate-900 dark:text-white text-lg">${state.currentUser.name}</h3>
                   <p class="text-xs text-slate-400">${state.currentUser.email}</p>
                 </div>
-                ${state.currentUser.role === 'admin' ? `<span class="px-3 py-1 bg-rose-500/10 text-rose-500 font-bold rounded-full text-[10px] uppercase tracking-wider inline-block">Sphere Admin</span>` : ''}
+                ${state.currentUser.role === 'admin' ? `<span class="px-3 py-1 bg-rose-500/10 text-rose-500 font-bold rounded-full text-[10px] uppercase tracking-wider inline-block">Admin Console</span>` : ''}
               </div>
 
               <div class="flex flex-col gap-1.5 pt-4 border-t border-slate-200 dark:border-slate-800">
@@ -2043,7 +2173,7 @@
 
             <!-- Detail panel -->
             <div class="flex-1 w-full space-y-6">
-              <h2 class="text-xl font-black text-slate-950 dark:text-white">Order Tracking Portfolio</h2>
+              <h2 class="text-xl font-black text-slate-955 dark:text-white">Order Tracking Portfolio</h2>
               ${state.orders.length === 0 ? `
                 <div class="p-8 bg-slate-50 dark:bg-slate-900 border rounded-xl text-center">
                   <p class="text-slate-400 text-xs">No orders placed yet.</p>
@@ -2063,7 +2193,7 @@
 
       const isAdmin = email.toLowerCase().includes('admin');
       state.currentUser = {
-        name: isAdmin ? 'Executive Admin' : 'Rahul Sharma',
+        name: isAdmin ? 'Executive Admin' : 'Valued Customer',
         email: email,
         role: isAdmin ? 'admin' : 'user'
       };
@@ -2105,7 +2235,7 @@
         const finalPrice = p.price * (1 - p.discount / 100);
         comparisonColumns += `
           <div class="col-span-1 flex flex-col text-sm divide-y divide-slate-100 dark:divide-slate-800 relative">
-            <button onclick="appActions.toggleCompare(${p.id})" class="absolute top-2 right-2 p-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-500 rounded-full">
+            <button onclick="appActions.toggleCompare(${p.id})" class="absolute top-2 right-2 p-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 rounded-full">
               <i data-lucide="x" class="w-4 h-4"></i>
             </button>
 
@@ -2116,7 +2246,7 @@
             </div>
 
             <div class="p-4 h-16 flex items-center font-black text-slate-950 dark:text-white bg-slate-50 dark:bg-slate-900/50">
-              ₹${finalPrice.toLocaleString('en-IN', { minimumFractionDigits: 2 })} ${p.discount > 0 ? `<span class="ml-1.5 text-[9px] text-rose-500">-${p.discount}%</span>` : ''}
+              ₹${finalPrice.toFixed(2)} ${p.discount > 0 ? `<span class="ml-1.5 text-[9px] text-rose-500">-${p.discount}%</span>` : ''}
             </div>
 
             <div class="p-4 h-16 flex items-center text-slate-600 dark:text-slate-300">${p.category}</div>
@@ -2182,7 +2312,7 @@
               </div>
             </td>
             <td class="p-4 font-semibold">${p.category}</td>
-            <td class="p-4 font-bold text-slate-900 dark:text-white">₹${p.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })} ${p.discount > 0 ? `<span class="text-rose-500 font-normal">(-${p.discount}%)</span>` : ''}</td>
+            <td class="p-4 font-bold text-slate-900 dark:text-white">₹${p.price.toFixed(2)} ${p.discount > 0 ? `<span class="text-rose-500 font-normal">(-${p.discount}%)</span>` : ''}</td>
             <td class="p-4 font-bold">${p.stock} units</td>
             <td class="p-4 text-right space-x-2">
               <button onclick="handleAdminEditClick(${p.id})" class="p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 text-indigo-600 rounded-lg">
@@ -2306,7 +2436,6 @@
       document.getElementById('admin-crud-form-container').classList.add('hidden');
     }
 
-    // Populate editor with Rupee metrics
     function handleAdminEditClick(id) {
       const product = state.products.find(p => p.id === id);
       if (!product) return;
