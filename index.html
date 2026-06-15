@@ -1,0 +1,2393 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopSphere Premium E-Commerce Sandbox</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            slate: {
+              850: '#1b2330',
+              950: '#0b0f19'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide/dist/umd/lucide.min.js"></script>
+  <!-- Custom UI Styles -->
+  <style>
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .animate-slide-in-right {
+      animation: slideInRight 0.3s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    body {
+      transition: background-color 0.3s, color 0.3s;
+    }
+    /* Simple custom scrollbar for luxury feel */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-white dark:bg-slate-950 text-slate-950 dark:text-slate-50 min-h-screen flex flex-col justify-between font-sans">
+
+  <!-- ==========================================
+       TOP NAVIGATION BAR
+       ========================================== -->
+  <header id="navbar-view" class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 border-b border-slate-100 dark:border-slate-800 backdrop-blur-md"></header>
+
+  <!-- ==========================================
+       MAIN DYNAMIC PORTVIEW CONTAINER
+       ========================================== -->
+  <main id="app-viewport" class="flex-1 animate-fade-in"></main>
+
+  <!-- ==========================================
+       TOAST HUD NOTIFICATIONS (TOP LAYER)
+       ========================================== -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full"></div>
+
+  <!-- ==========================================
+       GLOBAL PERSISTENT FOOTER
+       ========================================== -->
+  <footer id="footer-view" class="bg-slate-950 text-white py-16 mt-20 border-t border-slate-900"></footer>
+
+  <!-- ==========================================
+       CORE DATA & APPLICATION LOGIC ENGINE
+       ========================================== -->
+  <script>
+    // Initial 31 products set corresponding to previous catalog
+    const INITIAL_PRODUCTS = [
+      {
+        id: 1,
+        title: "Quantum Sound Pro ANC Headphones",
+        category: "Electronics",
+        price: 299.99,
+        discount: 15,
+        rating: 4.8,
+        reviewsCount: 124,
+        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+        description: "Experience absolute auditory bliss with active hybrid noise cancellation, 40-hour battery life, and custom-tuned high-fidelity acoustic drivers.",
+        specs: { "Battery Life": "40 Hours", "Bluetooth": "v5.2", "Driver": "40mm Dynamic", "Warranty": "2 Years" },
+        stock: 12,
+        brand: "Quantum",
+        isFeatured: true,
+        isBestSeller: true,
+        reviews: [
+          { id: 1, user: "Elena R.", rating: 5, date: "2026-05-10", comment: "Incredible sound isolation! Better than my premium Bose." },
+          { id: 2, user: "Marcus T.", rating: 4, date: "2026-05-01", comment: "Comfortable for long work hours. Bass is deep but clean." }
+        ]
+      },
+      {
+        id: 2,
+        title: "VividView 27\" QHD IPS Monitor",
+        category: "Electronics",
+        price: 349.99,
+        discount: 10,
+        rating: 4.6,
+        reviewsCount: 89,
+        image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&auto=format&fit=crop&q=80",
+        description: "Designed for creators and gamers alike. Features a stunning 165Hz refresh rate, 99% sRGB coverage, and AMD FreeSync support.",
+        specs: { "Resolution": "2560 x 1440", "Panel Type": "IPS", "Refresh Rate": "165Hz", "Response Time": "1ms" },
+        stock: 5,
+        brand: "VividView",
+        isFeatured: true,
+        reviews: []
+      },
+      {
+        id: 3,
+        title: "SleekBook Carbon Pro 14\"",
+        category: "Electronics",
+        price: 1199.99,
+        discount: 8,
+        rating: 4.9,
+        reviewsCount: 45,
+        image: "https://images.unsplash.com/photo-1496181130204-755241524eab?w=600&auto=format&fit=crop&q=80",
+        description: "Unparalleled productivity in an ultra-light carbon chassis. Packed with the latest Gen-Z processor, 16GB RAM, and an ultra-vibrant OLED screen.",
+        specs: { "RAM": "16GB DDR5", "Storage": "1TB NVMe SSD", "CPU": "Octa-Core Pro" },
+        stock: 8,
+        brand: "Sleek",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 4,
+        title: "AeroCharge MagSafe Powerbank 10k",
+        category: "Electronics",
+        price: 49.99,
+        discount: 20,
+        rating: 4.3,
+        reviewsCount: 204,
+        image: "https://images.unsplash.com/photo-1609081219090-a6d81d3085bf?w=600&auto=format&fit=crop&q=80",
+        description: "Snap and power up on the go. 15W wireless speed with custom LCD battery capacity indicator.",
+        specs: { "Capacity": "10,000 mAh", "Output": "20W PD Type-C" },
+        stock: 45,
+        brand: "AeroCharge",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 5,
+        title: "ChronoFit Active Smartwatch",
+        category: "Electronics",
+        price: 189.99,
+        discount: 25,
+        rating: 4.5,
+        reviewsCount: 312,
+        image: "https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=600&auto=format&fit=crop&q=80",
+        description: "Continuous heart-rate tracking, sleep cycle analysis, GPS navigation, and up to 10 days of performance charging.",
+        specs: { "Display": "1.43\" AMOLED", "Waterproof": "5ATM" },
+        stock: 22,
+        brand: "ChronoFit",
+        isFeatured: true,
+        reviews: []
+      },
+      {
+        id: 6,
+        title: "Urban Knit Classic Crewneck",
+        category: "Fashion",
+        price: 59.99,
+        discount: 30,
+        rating: 4.4,
+        reviewsCount: 95,
+        image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=80",
+        description: "A timeless, ultra-soft knit sweater woven from premium organic cotton blends. Perfect for layering across changing seasons.",
+        specs: { "Material": "80% Organic Cotton", "Fit": "Relaxed Classic" },
+        stock: 30,
+        brand: "UrbanKnit",
+        isFeatured: true,
+        reviews: []
+      },
+      {
+        id: 7,
+        title: "BreezeWalk Mesh Sneakers",
+        category: "Fashion",
+        price: 89.99,
+        discount: 15,
+        rating: 4.7,
+        reviewsCount: 152,
+        image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80",
+        description: "Ultra-breathable honeycomb mesh coupled with cloud-foam cushioning technology for unparalleled daytime pacing.",
+        specs: { "Weight": "240g", "Sole": "Shatterproof Rubber" },
+        stock: 18,
+        brand: "BreezeWalk",
+        isFeatured: true,
+        reviews: []
+      },
+      {
+        id: 8,
+        title: "Explorer Waterproof Trail Pack",
+        category: "Fashion",
+        price: 110.00,
+        discount: 10,
+        rating: 4.6,
+        reviewsCount: 64,
+        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&auto=format&fit=crop&q=80",
+        description: "Heavy-duty ripstop Cordura shell with dynamic rolltop utility compartments and dedicated tech sleeves.",
+        specs: { "Capacity": "28L to 35L", "Material": "Cordura 500D" },
+        stock: 15,
+        brand: "Explorer",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 9,
+        title: "Apex Polarized Aviator Sunglasses",
+        category: "Fashion",
+        price: 135.00,
+        discount: 40,
+        rating: 4.2,
+        reviewsCount: 77,
+        image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&auto=format&fit=crop&q=80",
+        description: "Handcrafted lightweight beta-titanium frames engineered with 9-layer advanced glare protection filters.",
+        specs: { "Frame": "Beta-Titanium", "Lens Tech": "Polarized UV400" },
+        stock: 25,
+        brand: "Apex",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 10,
+        title: "Heritage Genuine Leather Belt",
+        category: "Fashion",
+        price: 45.00,
+        discount: 5,
+        rating: 4.8,
+        reviewsCount: 112,
+        image: "https://images.unsplash.com/photo-1624222247344-550fb8ecf78d?w=600&auto=format&fit=crop&q=80",
+        description: "Vegetable-tanned full-grain leather boasting a custom solid brass buckle that acquires an elegant patina over the decades.",
+        specs: { "Width": "1.5 inches", "Material": "Vegetable Tanned Leather" },
+        stock: 40,
+        brand: "Heritage",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 11,
+        title: "The Code Architect: Clean Systems Design",
+        category: "Books",
+        price: 34.99,
+        discount: 12,
+        rating: 4.9,
+        reviewsCount: 88,
+        image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=600&auto=format&fit=crop&q=80",
+        description: "Master clean architecture patterns, scalable API interfaces, microservices, and structural component modeling in modern distributed environments.",
+        specs: { "Author": "Dr. Sarah Lin", "Publisher": "TechPress" },
+        stock: 20,
+        brand: "TechPress",
+        isFeatured: true,
+        reviews: []
+      },
+      {
+        id: 12,
+        title: "Elysium: Future of Neural Networks",
+        category: "Books",
+        price: 19.99,
+        discount: 15,
+        rating: 4.5,
+        reviewsCount: 140,
+        image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&auto=format&fit=crop&q=80",
+        description: "A mind-bending journey detailing the integration of advanced human neural paths and hyper-intelligent machine networks.",
+        specs: { "Author": "James Vance", "Pages": "350 Pages" },
+        stock: 35,
+        brand: "Futura Publishing",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 13,
+        title: "Mindset Over Matter",
+        category: "Books",
+        price: 15.99,
+        discount: 10,
+        rating: 4.7,
+        reviewsCount: 420,
+        image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&auto=format&fit=crop&q=80",
+        description: "Unlock structural performance habits, dynamic flow states, and peak professional discipline with psychological strategies.",
+        specs: { "Author": "Prof. David Hayes" },
+        stock: 50,
+        brand: "MindAcademy",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 14,
+        title: "AromaPress Espresso Maker",
+        category: "Home & Kitchen",
+        price: 249.99,
+        discount: 20,
+        rating: 4.7,
+        reviewsCount: 180,
+        image: "https://images.unsplash.com/photo-1517256064527-09c53b2d0bc6?w=600&auto=format&fit=crop&q=80",
+        description: "15-bar Italian pressure pump extracting barista-level aromatic shots with built-in steam frother capabilities.",
+        specs: { "Pressure": "15 Bar", "Power": "1350W", "Material": "Stainless Steel" },
+        stock: 14,
+        brand: "AromaPress",
+        isFeatured: true,
+        isBestSeller: true,
+        reviews: []
+      },
+      {
+        id: 15,
+        title: "GlowGlow Ambient Air Purifier",
+        category: "Home & Kitchen",
+        price: 159.99,
+        discount: 10,
+        rating: 4.6,
+        reviewsCount: 92,
+        image: "https://images.unsplash.com/photo-1585338107529-13afc5f02586?w=600&auto=format&fit=crop&q=80",
+        description: "True H13 Medical-Grade HEPA filtration removing 99.97% of airborne micro-particulates paired with elegant ambient mood rings.",
+        specs: { "Filter Type": "H13 True HEPA", "Room Size": "Up to 350 sq ft" },
+        stock: 11,
+        brand: "GlowGlow",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 16,
+        title: "ChefVibe 8-Piece Cookware Set",
+        category: "Home & Kitchen",
+        price: 299.00,
+        discount: 15,
+        rating: 4.8,
+        reviewsCount: 74,
+        image: "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=600&auto=format&fit=crop&q=80",
+        description: "Professional triple-layer heat distribution core built with 18/10 stainless steel bodies that remain cool to touch on stove burners.",
+        specs: { "Layers": "Tri-Ply Clad", "Oven Safe": "Up to 500°F" },
+        stock: 6,
+        brand: "ChefVibe",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 17,
+        title: "NutriPulse Nutrient Extractor",
+        category: "Home & Kitchen",
+        price: 89.99,
+        discount: 15,
+        rating: 4.5,
+        reviewsCount: 160,
+        image: "https://images.unsplash.com/photo-1570197571499-166b36435e9f?w=600&auto=format&fit=crop&q=80",
+        description: "Crush tough nuts, high-density fiber greens, and frozen fruits in seconds with the 1200-watt pro cyclic extraction system.",
+        specs: { "Motor": "1200W", "Cups": "32 oz / 24 oz" },
+        stock: 20,
+        brand: "NutriPulse",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 18,
+        title: "Apex Carbon Fiber Road Bike",
+        category: "Sports",
+        price: 1899.99,
+        discount: 10,
+        rating: 4.9,
+        reviewsCount: 32,
+        image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=600&auto=format&fit=crop&q=80",
+        description: "Unparalleled aerodynamics, ultra-light carbon weave framework, and a precise Shimano 22-speed mechanical gear shifting profile.",
+        specs: { "Frame": "Toray T700 Carbon Fiber", "Groupset": "Shimano 105" },
+        stock: 4,
+        brand: "Apex Cycles",
+        isFeatured: true,
+        reviews: []
+      },
+      {
+        id: 19,
+        title: "ThermoShield Dual-Wall Flask 40oz",
+        category: "Sports",
+        price: 39.99,
+        discount: 20,
+        rating: 4.7,
+        reviewsCount: 380,
+        image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&auto=format&fit=crop&q=80",
+        description: "Keeps liquids ice cold for 24 hours or steaming hot for 12 hours. Features dynamic leak-proof straw lids.",
+        specs: { "Material": "18/8 Pro-Grade Stainless Steel" },
+        stock: 50,
+        brand: "ThermoShield",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 20,
+        title: "FlexiFit TPE Eco Fitness Mat",
+        category: "Sports",
+        price: 29.99,
+        discount: 5,
+        rating: 4.5,
+        reviewsCount: 144,
+        image: "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=600&auto=format&fit=crop&q=80",
+        description: "6mm dense eco-friendly cushioning with high-density non-slip grip layers protecting joints during strenuous sessions.",
+        specs: { "Thickness": "6mm", "Material": "Eco TPE" },
+        stock: 30,
+        brand: "FlexiFit",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 21,
+        title: "VenturePro 3-Season 4-Person Tent",
+        category: "Sports",
+        price: 179.99,
+        discount: 15,
+        rating: 4.6,
+        reviewsCount: 55,
+        image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&auto=format&fit=crop&q=80",
+        description: "Instant pop-up frame mechanics designed to withstand 35mph storm winds with high-density fly panels.",
+        specs: { "Capacity": "4 Person", "Setup Time": "60 Seconds" },
+        stock: 9,
+        brand: "VenturePro",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 22,
+        title: "GlowTherapy Face Serum Trio",
+        category: "Beauty",
+        price: 69.99,
+        discount: 25,
+        rating: 4.7,
+        reviewsCount: 198,
+        image: "https://images.unsplash.com/photo-1608248597481-496100c8c836?w=600&auto=format&fit=crop&q=80",
+        description: "Complete facial nourishment containing highly concentrated Hyaluronic Acid, Organic Vitamin C, and Retinol restorative complexes.",
+        specs: { "Skin Type": "All", "Key Ingredients": "Hyaluronic, Vitamin C" },
+        stock: 16,
+        brand: "GlowTherapy",
+        isFeatured: true,
+        isBestSeller: true,
+        reviews: []
+      },
+      {
+        id: 23,
+        title: "PureSilk Ionic Hair Dryer",
+        category: "Beauty",
+        price: 129.99,
+        discount: 10,
+        rating: 4.6,
+        reviewsCount: 88,
+        image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&auto=format&fit=crop&q=80",
+        description: "Dries damp locks 50% faster than conventional dryers while locking in critical core cuticular hydration utilizing custom negative ion outputs.",
+        specs: { "Motor": "1875W Pro AC", "Tech": "Negative Ion" },
+        stock: 12,
+        brand: "PureSilk",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 24,
+        title: "HerbRoots Scalp Oil",
+        category: "Beauty",
+        price: 24.99,
+        discount: 15,
+        rating: 4.4,
+        reviewsCount: 290,
+        image: "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=600&auto=format&fit=crop&q=80",
+        description: "Infused with therapeutic rosemary extract, tea tree, and sweet almond oils to stimulate roots and target daily scalp dry patches.",
+        specs: { "Volume": "4 Fl Oz", "Ingredients": "Rosemary, Biotin" },
+        stock: 40,
+        brand: "HerbRoots",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 25,
+        title: "LumbarRelief Mesh Office Chair",
+        category: "Home & Kitchen",
+        price: 219.99,
+        discount: 12,
+        rating: 4.6,
+        reviewsCount: 110,
+        image: "https://images.unsplash.com/photo-1505797149-43b0069ec26b?w=600&auto=format&fit=crop&q=80",
+        description: "Ergonomically contoured spine curves, adaptive responsive mesh backings, and fully customizable armrests for posture balance.",
+        specs: { "Max Weight": "300 lbs", "Base": "Alloy Steel" },
+        stock: 10,
+        brand: "LumbarRelief",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 26,
+        title: "ProPulse Muscle Massager Gun",
+        category: "Sports",
+        price: 149.99,
+        discount: 20,
+        rating: 4.8,
+        reviewsCount: 135,
+        image: "https://images.unsplash.com/photo-1519823551278-64ac928349d2?w=600&auto=format&fit=crop&q=80",
+        description: "High percussion deep tissue stimulation relieving stiffness instantly. Powered by dynamic quiet-drive brushless motors.",
+        specs: { "Speed Levels": "30 Speeds", "Attachments": "6 Heads" },
+        stock: 15,
+        brand: "ProPulse",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 27,
+        title: "Apex Pro Carbon Tennis Racket",
+        category: "Sports",
+        price: 210.00,
+        discount: 15,
+        rating: 4.7,
+        reviewsCount: 46,
+        image: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&auto=format&fit=crop&q=80",
+        description: "Lightweight dynamic head geometry designed for fast swing tempos and precision baseline shots.",
+        specs: { "Weight": "285g", "Head Size": "100 sq in" },
+        stock: 7,
+        brand: "Apex Cycles",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 28,
+        title: "VividColor Artist Marker Set",
+        category: "Books",
+        price: 54.99,
+        discount: 10,
+        rating: 4.5,
+        reviewsCount: 84,
+        image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&auto=format&fit=crop&q=80",
+        description: "Professional grade dual-tip alcohol markers featuring fine chisel and smooth brush nibs for dynamic art rendering.",
+        specs: { "Ink Type": "Alcohol-based", "Colors": "120 Tones" },
+        stock: 18,
+        brand: "VividColor",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 29,
+        title: "BioDermal Clay Mask",
+        category: "Beauty",
+        price: 19.99,
+        discount: 15,
+        rating: 4.3,
+        reviewsCount: 167,
+        image: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=600&auto=format&fit=crop&q=80",
+        description: "Premium French green clay dynamic treatment targets clogged pores, drawing toxins out from superficial skin zones.",
+        specs: { "Ingredients": "French Green Clay, Aloe" },
+        stock: 25,
+        brand: "BioDermal",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 30,
+        title: "Urban Shield Winter Windbreaker",
+        category: "Fashion",
+        price: 145.00,
+        discount: 25,
+        rating: 4.6,
+        reviewsCount: 89,
+        image: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&auto=format&fit=crop&q=80",
+        description: "Engineered windbreak lining with water repelling coatings to protect urban commuters on breezy, drizzly workdays.",
+        specs: { "Material": "Recycled Nylon Blend" },
+        stock: 14,
+        brand: "UrbanKnit",
+        isFeatured: false,
+        reviews: []
+      },
+      {
+        id: 31,
+        title: "HydroGlow Overnight Moisturizer",
+        category: "Beauty",
+        price: 34.99,
+        discount: 20,
+        rating: 4.8,
+        reviewsCount: 103,
+        image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&auto=format&fit=crop&q=80",
+        description: "Intense moisture recovery gel formulated with snail mucin filtrates and soothing centella extracts for glowing mornings.",
+        specs: { "Size": "50ml", "Ingredients": "Snail Mucin, Centella" },
+        stock: 19,
+        brand: "BioDermal",
+        isFeatured: false,
+        reviews: []
+      }
+    ];
+
+    const CATEGORIES = ["All", "Electronics", "Fashion", "Books", "Home & Kitchen", "Sports", "Beauty"];
+
+    // ==========================================
+    // GLOBAL STATE ENGINE
+    // ==========================================
+    const state = {
+      theme: localStorage.getItem('theme') || 'light',
+      products: JSON.parse(localStorage.getItem('ss_products')) || INITIAL_PRODUCTS,
+      cart: JSON.parse(localStorage.getItem('ss_cart')) || [],
+      wishlist: JSON.parse(localStorage.getItem('ss_wishlist')) || [],
+      currentUser: JSON.parse(localStorage.getItem('ss_user')) || null,
+      addresses: JSON.parse(localStorage.getItem('ss_addresses')) || [
+        { id: '1', type: 'Home', name: 'John Doe', line1: '42 Wallaby Way', city: 'Sydney', zip: '2000', phone: '+1 (555) 0199' }
+      ],
+      orders: JSON.parse(localStorage.getItem('ss_orders')) || [
+        {
+          id: 'ORD-94819',
+          date: '2026-06-01',
+          total: 349.98,
+          status: 'Delivered',
+          items: [
+            { id: 1, title: 'Quantum Sound Pro ANC Headphones', price: 299.99, quantity: 1 }
+          ]
+        }
+      ],
+      compareList: [],
+      recentlyViewed: JSON.parse(localStorage.getItem('ss_recent')) || [],
+      promoCode: '',
+      appliedPromo: null, // { code: 'SAVE10', discountPercent: 10 }
+      view: 'home', // 'home' | 'shop' | 'product-detail' | 'cart' | 'checkout' | 'wishlist' | 'profile' | 'compare' | 'admin'
+      activeProductId: 1,
+      
+      // Shop view filter states
+      searchTerm: '',
+      selectedCategory: 'All',
+      priceRange: [0, 2000],
+      selectedBrand: 'All',
+      minRating: 0,
+      sortBy: 'popular', // low-high, high-low, newest, popular
+      viewMode: 'grid', // grid | list
+
+      // Countdown tracker (flash sales)
+      timeLeft: { hrs: 11, mins: 42, secs: 19 }
+    };
+
+    // Initialize layout theme on load
+    document.documentElement.className = state.theme;
+
+    // Save states wrapper
+    function saveState() {
+      localStorage.setItem('ss_products', JSON.stringify(state.products));
+      localStorage.setItem('ss_cart', JSON.stringify(state.cart));
+      localStorage.setItem('ss_wishlist', JSON.stringify(state.wishlist));
+      localStorage.setItem('ss_user', JSON.stringify(state.currentUser));
+      localStorage.setItem('ss_addresses', JSON.stringify(state.addresses));
+      localStorage.setItem('ss_orders', JSON.stringify(state.orders));
+      localStorage.setItem('ss_recent', JSON.stringify(state.recentlyViewed));
+      localStorage.setItem('theme', state.theme);
+    }
+
+    // Flash sale countdown mechanics
+    setInterval(() => {
+      if (state.timeLeft.secs > 0) {
+        state.timeLeft.secs--;
+      } else if (state.timeLeft.mins > 0) {
+        state.timeLeft.mins--;
+        state.timeLeft.secs = 59;
+      } else if (state.timeLeft.hrs > 0) {
+        state.timeLeft.hrs--;
+        state.timeLeft.mins = 59;
+        state.timeLeft.secs = 59;
+      } else {
+        state.timeLeft = { hrs: 12, mins: 0, secs: 0 };
+      }
+      const elHrs = document.getElementById('timer-hrs');
+      const elMins = document.getElementById('timer-mins');
+      const elSecs = document.getElementById('timer-secs');
+      if (elHrs && elMins && elSecs) {
+        elHrs.textContent = String(state.timeLeft.hrs).padStart(2, '0');
+        elMins.textContent = String(state.timeLeft.mins).padStart(2, '0');
+        elSecs.textContent = String(state.timeLeft.secs).padStart(2, '0');
+      }
+    }, 1000);
+
+    // ==========================================
+    // TOAST SYSTEM API
+    // ==========================================
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const id = Date.now();
+      const toast = document.createElement('div');
+      
+      const themeClasses = 
+        type === 'success' ? 'bg-emerald-50/95 dark:bg-emerald-950/95 border-emerald-500 text-emerald-800 dark:text-emerald-100' :
+        type === 'error' ? 'bg-rose-50/95 dark:bg-rose-950/95 border-rose-500 text-rose-800 dark:text-rose-100' :
+        type === 'warning' ? 'bg-amber-50/95 dark:bg-amber-950/95 border-amber-500 text-amber-800 dark:text-amber-100' :
+        'bg-sky-50/95 dark:bg-sky-950/95 border-sky-500 text-sky-800 dark:text-sky-100';
+
+      toast.className = `flex items-center gap-3 p-4 rounded-xl shadow-xl transition-all duration-300 border backdrop-blur-md animate-slide-in-right ${themeClasses}`;
+      toast.id = `toast-${id}`;
+      
+      let iconMarkup = '<i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0"></i>';
+      if (type === 'error') iconMarkup = '<i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0"></i>';
+      if (type === 'warning') iconMarkup = '<i data-lucide="info" class="w-5 h-5 flex-shrink-0"></i>';
+
+      toast.innerHTML = `
+        ${iconMarkup}
+        <span class="text-sm font-medium">${message}</span>
+      `;
+
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // ==========================================
+    // ACTIONS & CONTROLS
+    // ==========================================
+    window.appActions = {
+      setView(v) {
+        state.view = v;
+        renderNavbar();
+        renderActiveView();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+      toggleTheme() {
+        state.theme = state.theme === 'light' ? 'dark' : 'light';
+        document.documentElement.className = state.theme;
+        saveState();
+        renderNavbar();
+        renderActiveView();
+      },
+      addToCart(prodId, qty = 1) {
+        const product = state.products.find(p => p.id === prodId);
+        if (!product) return;
+        if (product.stock <= 0) {
+          showToast("Item is out of stock!", "error");
+          return;
+        }
+        const existing = state.cart.find(item => item.id === prodId);
+        if (existing) {
+          existing.quantity += qty;
+          showToast(`Updated quantity for ${product.title} in cart!`, 'info');
+        } else {
+          state.cart.push({ ...product, quantity: qty });
+          showToast(`${product.title} added to shopping cart!`, 'success');
+        }
+        saveState();
+        renderNavbar();
+        renderActiveView();
+      },
+      removeFromCart(prodId) {
+        state.cart = state.cart.filter(item => item.id !== prodId);
+        showToast("Item removed from your cart.", "info");
+        saveState();
+        renderNavbar();
+        renderActiveView();
+      },
+      updateCartQty(prodId, delta) {
+        const item = state.cart.find(i => i.id === prodId);
+        if (item) {
+          const newQty = item.quantity + delta;
+          item.quantity = newQty < 1 ? 1 : newQty;
+          saveState();
+          renderNavbar();
+          renderActiveView();
+        }
+      },
+      toggleWishlist(prodId) {
+        const product = state.products.find(p => p.id === prodId);
+        if (!product) return;
+        const existsIdx = state.wishlist.findIndex(item => item.id === prodId);
+        if (existsIdx > -1) {
+          state.wishlist.splice(existsIdx, 1);
+          showToast("Removed from Wishlist", "info");
+        } else {
+          state.wishlist.push(product);
+          showToast("Added to Wishlist!", "success");
+        }
+        saveState();
+        renderNavbar();
+        renderActiveView();
+      },
+      toggleCompare(prodId) {
+        const product = state.products.find(p => p.id === prodId);
+        if (!product) return;
+        const existsIdx = state.compareList.findIndex(item => item.id === prodId);
+        if (existsIdx > -1) {
+          state.compareList.splice(existsIdx, 1);
+          showToast("Removed from comparison", "info");
+        } else {
+          if (state.compareList.length >= 3) {
+            showToast("You can only compare up to 3 products at a time.", "warning");
+            return;
+          }
+          state.compareList.push(product);
+          showToast("Added to comparison list", "success");
+        }
+        renderNavbar();
+        renderActiveView();
+      },
+      applyCoupon() {
+        const input = document.getElementById('promo-input');
+        if (!input) return;
+        const code = input.value.trim().toUpperCase();
+        if (code === 'SAVE10') {
+          state.appliedPromo = { code: 'SAVE10', discountPercent: 10 };
+          showToast("Coupon 'SAVE10' applied! 10% discount subtracted.", 'success');
+        } else if (code === 'FREESHIP') {
+          state.appliedPromo = { code: 'FREESHIP', discountPercent: 0, freeShipping: true };
+          showToast("Coupon 'FREESHIP' applied! Free Delivery.", 'success');
+        } else if (code === 'SUPER30') {
+          state.appliedPromo = { code: 'SUPER30', discountPercent: 30 };
+          showToast("Super Coupon 'SUPER30' applied! 30% discount subtracted.", 'success');
+        } else {
+          showToast("Invalid Promo Code", "error");
+        }
+        renderActiveView();
+      },
+      viewProductDetail(prodId) {
+        state.activeProductId = prodId;
+        const product = state.products.find(p => p.id === prodId);
+        if (product) {
+          // Track recently viewed
+          state.recentlyViewed = [product, ...state.recentlyViewed.filter(i => i.id !== prodId)].slice(0, 6);
+          saveState();
+        }
+        this.setView('product-detail');
+      }
+    };
+
+    // Helper: Star rating component generator (Static string template)
+    function getStarRatingHTML(rating, count) {
+      const fullStars = Math.floor(rating);
+      const hasHalf = rating % 1 >= 0.5;
+      let starsHTML = '';
+      for (let i = 0; i < 5; i++) {
+        if (i < fullStars) {
+          starsHTML += '<i data-lucide="star" class="w-3.5 h-3.5 fill-current text-amber-400"></i>';
+        } else if (i === fullStars && hasHalf) {
+          starsHTML += '<i data-lucide="star" class="w-3.5 h-3.5 fill-current text-amber-400 opacity-70"></i>';
+        } else {
+          starsHTML += '<i data-lucide="star" class="w-3.5 h-3.5 text-slate-300 dark:text-slate-600"></i>';
+        }
+      }
+      return `
+        <div class="flex items-center gap-1">
+          <div class="flex items-center">${starsHTML}</div>
+          ${count !== undefined ? `<span class="text-[10px] text-slate-500 ml-1">(${count})</span>` : ''}
+        </div>
+      `;
+    }
+
+    // Dynamic rendering of navbar to retain dynamic numbers
+    function renderNavbar() {
+      const cartCount = state.cart.reduce((acc, curr) => acc + curr.quantity, 0);
+      const wishlistCount = state.wishlist.length;
+      const nav = document.getElementById('navbar-view');
+      
+      nav.innerHTML = `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-16 sm:h-20 gap-4">
+            
+            <!-- Logo -->
+            <div onclick="state.selectedCategory='All'; appActions.setView('home')" class="flex items-center gap-2 cursor-pointer group">
+              <div class="p-2 bg-indigo-600 rounded-xl text-white shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+                <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+              </div>
+              <span class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-indigo-600 to-indigo-400 bg-clip-text text-transparent dark:from-white dark:to-slate-300">
+                ShopSphere
+              </span>
+            </div>
+
+            <!-- Header Search Bar -->
+            <form onsubmit="event.preventDefault(); state.searchTerm=document.getElementById('nav-search').value; appActions.setView('shop')" class="hidden md:flex flex-1 max-w-lg relative">
+              <input 
+                id="nav-search"
+                type="text"
+                placeholder="Search premium tech, apparel, cosmetics..."
+                value="${state.searchTerm}"
+                class="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-transparent focus:border-indigo-500 focus:outline-none transition-colors text-sm"
+              />
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            </form>
+
+            <!-- Action Controls -->
+            <div class="flex items-center gap-2 sm:gap-4">
+              <button onclick="appActions.toggleTheme()" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                ${state.theme === 'light' ? '<i data-lucide="moon" class="w-5 h-5"></i>' : '<i data-lucide="sun" class="w-5 h-5 text-amber-400"></i>'}
+              </button>
+
+              <button onclick="appActions.setView('compare')" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors relative hidden sm:block">
+                <i data-lucide="arrow-left-right" class="w-5 h-5"></i>
+                ${state.compareList.length > 0 ? `<span class="absolute top-1 right-1 w-2 h-2 bg-indigo-500 rounded-full"></span>` : ''}
+              </button>
+
+              <button onclick="appActions.setView('wishlist')" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors relative">
+                <i data-lucide="heart" class="w-5 h-5"></i>
+                ${wishlistCount > 0 ? `<span class="absolute top-1 right-1 w-4 h-4 text-[10px] font-bold text-white bg-rose-500 rounded-full flex items-center justify-center">${wishlistCount}</span>` : ''}
+              </button>
+
+              <button onclick="appActions.setView('cart')" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors relative">
+                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                ${cartCount > 0 ? `<span class="absolute top-1 right-1 w-4 h-4 text-[10px] font-bold text-white bg-indigo-600 rounded-full flex items-center justify-center animate-bounce">${cartCount}</span>` : ''}
+              </button>
+
+              <div class="flex items-center gap-1 sm:gap-2 pl-2 border-l border-slate-100 dark:border-slate-800">
+                ${state.currentUser ? `
+                  <button onclick="appActions.setView('profile')" class="flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 px-3 py-1.5 rounded-xl transition-colors">
+                    <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold">
+                      ${state.currentUser.name[0].toUpperCase()}
+                    </div>
+                    <span class="hidden lg:inline text-sm font-medium text-slate-700 dark:text-slate-200">${state.currentUser.name}</span>
+                  </button>
+                  ${state.currentUser.role === 'admin' ? `
+                    <button onclick="appActions.setView('admin')" class="p-2 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-xl transition-colors">
+                      <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    </button>
+                  ` : ''}
+                ` : `
+                  <button onclick="appActions.setView('profile')" class="flex items-center gap-1.5 px-4 py-2 bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-sm font-semibold rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors">
+                    <i data-lucide="user" class="w-4 h-4"></i> <span class="hidden sm:inline">Sign In</span>
+                  </button>
+                `}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // Render footer content
+    function renderFooter() {
+      const footer = document.getElementById('footer-view');
+      footer.innerHTML = `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 text-sm text-slate-400">
+          <div class="space-y-4">
+            <div class="flex items-center gap-2 text-white">
+              <div class="p-2 bg-indigo-600 rounded-lg">
+                <i data-lucide="shopping-bag" class="w-5 h-5 text-white"></i>
+              </div>
+              <span class="text-lg font-black tracking-tight"></span>
+            </div>
+            <p class="text-xs leading-relaxed">
+              Pioneering modern e-commerce through responsive catalog matrices, custom checkout options, and seamless customer support services.
+            </p>
+          </div>
+          <div class="space-y-3">
+            <h4 class="font-extrabold text-white text-xs uppercase tracking-wider">Product Categories</h4>
+            <ul class="space-y-1.5 text-xs">
+              <li><button onclick="state.selectedCategory='Electronics'; appActions.setView('shop')" class="hover:text-white">Consumer Tech Hardware</button></li>
+              <li><button onclick="state.selectedCategory='Fashion'; appActions.setView('shop')" class="hover:text-white">Active Urban Apparels</button></li>
+              <li><button onclick="state.selectedCategory='Home & Kitchen'; appActions.setView('shop')" class="hover:text-white">Home Craft & Kitchen Essentials</button></li>
+              <li><button onclick="state.selectedCategory='Beauty'; appActions.setView('shop')" class="hover:text-white">Cosmetics & Personal Wellness</button></li>
+            </ul>
+          </div>
+          <div class="space-y-3">
+            <h4 class="font-extrabold text-white text-xs uppercase tracking-wider">Help & Guardrails</h4>
+            <ul class="space-y-1.5 text-xs">
+              <li><button onclick="appActions.setView('profile')" class="hover:text-white">Track Order Status</button></li>
+              <li><span class="cursor-pointer hover:text-white">10-Day Return Guarantees</span></li>
+              <li><span class="cursor-pointer hover:text-white">Privacy Safeguards</span></li>
+            </ul>
+          </div>
+          <div class="space-y-3">
+            <h4 class="font-extrabold text-white text-xs uppercase tracking-wider">Authorized Sandbox</h4>
+            <p class="text-xs leading-relaxed">
+              This workspace replicates authentic web mechanics. Session states persist safely across browser reloads.
+            </p>
+            <div class="text-[10px] text-indigo-400 font-mono">Secure Payment Encryption Active (AES-256)</div>
+          </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mt-12 border-t border-slate-900 text-center text-xs text-slate-500">
+          © 2026 ANSH Premium Ecosystem. Built for seamless professional client engagement.
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // Helper: Shared Product card markup builder
+    function buildProductCardHTML(p) {
+      const isWishlisted = state.wishlist.some(item => item.id === p.id);
+      const isCompared = state.compareList.some(item => item.id === p.id);
+      const finalPrice = p.price * (1 - p.discount / 100);
+
+      return `
+        <div class="group relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-slate-200 dark:hover:border-slate-700 flex flex-col justify-between">
+          
+          <div class="absolute top-3 left-3 z-20 flex flex-col gap-1.5">
+            ${p.discount > 0 ? `<span class="px-2 py-0.5 bg-rose-500 text-white text-[10px] font-black rounded-lg uppercase">-${p.discount}% OFF</span>` : ''}
+            ${p.isBestSeller ? `<span class="px-2 py-0.5 bg-amber-500 text-slate-950 text-[10px] font-black rounded-lg uppercase">Best Seller</span>` : ''}
+          </div>
+
+          <div class="absolute top-3 right-3 z-20 flex flex-col gap-1">
+            <button onclick="event.stopPropagation(); appActions.toggleWishlist(${p.id})" class="p-2 rounded-xl backdrop-blur-md transition-colors ${isWishlisted ? 'bg-rose-500 text-white' : 'bg-white/80 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 hover:text-rose-500'}">
+              <i data-lucide="heart" class="w-4 h-4 fill-current"></i>
+            </button>
+            <button onclick="event.stopPropagation(); appActions.toggleCompare(${p.id})" class="p-2 rounded-xl backdrop-blur-md transition-colors ${isCompared ? 'bg-indigo-600 text-white' : 'bg-white/80 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 hover:text-indigo-600'}">
+              <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div onclick="appActions.viewProductDetail(${p.id})" class="relative pt-[100%] overflow-hidden bg-slate-50 dark:bg-slate-950 cursor-pointer">
+            <img src="${p.image}" alt="${p.title}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+            ${p.stock <= 0 ? `<div class="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center text-white font-extrabold uppercase tracking-widest text-xs">Out of Stock</div>` : ''}
+          </div>
+
+          <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+            <div class="space-y-1">
+              <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">${p.category}</span>
+              <h4 onclick="appActions.viewProductDetail(${p.id})" class="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base line-clamp-1 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">${p.title}</h4>
+              ${getStarRatingHTML(p.rating, p.reviewsCount)}
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex items-baseline gap-2">
+                <span class="text-base sm:text-lg font-black text-slate-900 dark:text-white">$${finalPrice.toFixed(2)}</span>
+                ${p.discount > 0 ? `<span class="text-xs text-slate-400 dark:text-slate-500 line-through">$${p.price.toFixed(2)}</span>` : ''}
+              </div>
+              <button onclick="appActions.addToCart(${p.id})" ${p.stock <= 0 ? 'disabled' : ''} class="w-full py-2.5 bg-slate-950 text-white dark:bg-white dark:text-slate-950 rounded-xl text-xs font-bold hover:bg-indigo-600 dark:hover:bg-indigo-50 hover:text-white dark:hover:text-slate-950 transition-colors flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-40">
+                <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Add To Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ==========================================
+    // ROUTED ENGINE VIEWS RENDERING
+    // ==========================================
+    function renderActiveView() {
+      const container = document.getElementById('app-viewport');
+      container.innerHTML = ''; // Clear viewport
+
+      switch (state.view) {
+        case 'home':
+          renderHome(container);
+          break;
+        case 'shop':
+          renderShop(container);
+          break;
+        case 'product-detail':
+          renderProductDetail(container);
+          break;
+        case 'cart':
+          renderCart(container);
+          break;
+        case 'checkout':
+          renderCheckout(container);
+          break;
+        case 'wishlist':
+          renderWishlist(container);
+          break;
+        case 'profile':
+          renderProfile(container);
+          break;
+        case 'compare':
+          renderCompare(container);
+          break;
+        case 'admin':
+          renderAdmin(container);
+          break;
+      }
+      lucide.createIcons();
+    }
+
+    // 1. HOME PAGE VIEW
+    function renderHome(container) {
+      const featured = state.products.filter(p => p.isFeatured).slice(0, 4);
+      const bestSellers = state.products.filter(p => p.isBestSeller).slice(0, 4);
+      const deals = state.products.slice(0, 4);
+
+      let categoriesGrid = '';
+      CATEGORIES.forEach(cat => {
+        categoriesGrid += `
+          <div onclick="state.selectedCategory='${cat}'; appActions.setView('shop')" class="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded-2xl cursor-pointer group transition-all duration-300 hover:shadow-md">
+            <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform mb-2">
+              <i data-lucide="tag" class="w-5 h-5"></i>
+            </div>
+            <span class="text-sm font-bold text-slate-700 dark:text-slate-200 text-center">${cat}</span>
+          </div>
+        `;
+      });
+
+      let dealsGrid = '';
+      deals.forEach(p => dealsGrid += buildProductCardHTML(p));
+
+      let featuredGrid = '';
+      featured.forEach(p => featuredGrid += buildProductCardHTML(p));
+
+      let bestSellersGrid = '';
+      bestSellers.forEach(p => bestSellersGrid += buildProductCardHTML(p));
+
+      container.innerHTML = `
+        <div class="space-y-12 pb-20 animate-fade-in">
+          
+          <!-- Hero Section Carousel (Single Static Banner) -->
+          <section class="relative overflow-hidden bg-slate-900 rounded-2xl sm:rounded-3xl shadow-xl mx-4 sm:mx-6 lg:mx-8">
+            <div class="absolute inset-0 bg-gradient-to-r from-black/85 to-transparent z-10"></div>
+            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&auto=format&fit=crop&q=80" alt="Hero Banner" class="absolute inset-0 w-full h-full object-cover opacity-60">
+            <div class="relative z-20 max-w-2xl px-6 py-16 sm:px-12 sm:py-24 md:py-32 flex flex-col justify-center items-start text-white space-y-6">
+              <span class="px-3 py-1 bg-indigo-600 text-xs font-bold uppercase tracking-wider rounded-full">Exclusive Flash Offer</span>
+              <h1 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight">Quantum Sound Pro ANC Headphones</h1>
+              <p class="text-slate-300 text-sm sm:text-base line-clamp-2 max-w-md">Experience absolute auditory bliss with active hybrid noise cancellation and custom-tuned high-fidelity acoustic drivers.</p>
+              <button onclick="appActions.viewProductDetail(1)" class="px-6 py-3 bg-white text-slate-950 rounded-xl text-sm font-bold shadow-lg hover:bg-slate-100 transition-transform active:scale-95">Shop Now</button>
+            </div>
+          </section>
+
+          <!-- Categories -->
+          <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 mb-6">
+              <i data-lucide="sparkles" class="w-5 h-5 text-indigo-500"></i> Explore Top Categories
+            </h2>
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">${categoriesGrid}</div>
+          </section>
+
+          <!-- Flash Sale Section -->
+          <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-amber-500/10 dark:bg-amber-500/5 rounded-3xl p-6 sm:p-8 border border-amber-500/20">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-extrabold text-sm uppercase tracking-wider">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span> Limited Time Left
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">Midnight Lightning Deals</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-semibold mr-1">Ends In:</span>
+                <div class="flex items-center gap-1.5">
+                  <span id="timer-hrs" class="px-3 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold text-sm sm:text-base">${String(state.timeLeft.hrs).padStart(2, '0')}</span>
+                  <span class="text-slate-900 dark:text-white font-bold">:</span>
+                  <span id="timer-mins" class="px-3 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold text-sm sm:text-base">${String(state.timeLeft.mins).padStart(2, '0')}</span>
+                  <span class="text-slate-900 dark:text-white font-bold">:</span>
+                  <span id="timer-secs" class="px-3 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold text-sm sm:text-base">${String(state.timeLeft.secs).padStart(2, '0')}</span>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">${dealsGrid}</div>
+          </section>
+
+          <!-- Featured Selections -->
+          <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            <div class="space-y-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-2xl font-black text-slate-900 dark:text-white">Featured Selections</h2>
+                  <p class="text-slate-500 dark:text-slate-400 text-sm">Curated supreme gadgets and essentials for active lifestyles</p>
+                </div>
+                <button onclick="state.selectedCategory='All'; appActions.setView('shop')" class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                  See All Products <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">${featuredGrid}</div>
+            </div>
+
+            <!-- Promotion Banner -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gradient-to-r from-slate-900 to-indigo-950 rounded-3xl overflow-hidden p-8 sm:p-12 text-white items-center">
+              <div class="space-y-6">
+                <span class="px-3 py-1 bg-amber-500 text-slate-950 font-extrabold text-xs tracking-wider rounded-full uppercase">Exclusive Coupon Offer</span>
+                <h3 class="text-3xl sm:text-4xl font-black leading-tight">Get an Extra 30% Off Your Initial Order!</h3>
+                <p class="text-slate-300 text-sm max-w-sm">Enter promo code <span class="bg-white/20 text-white font-mono px-2 py-1 rounded">SUPER30</span> during checkout to claim your benefits.</p>
+                <button onclick="state.selectedCategory='All'; appActions.setView('shop')" class="px-6 py-3 bg-indigo-600 text-white hover:bg-indigo-700 font-bold rounded-xl shadow-lg text-sm">Start Exploring</button>
+              </div>
+              <div class="hidden md:flex justify-end relative h-64">
+                <img src="https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=600&auto=format&fit=crop&q=80" alt="Promo" class="object-contain h-full rounded-2xl transform rotate-3 shadow-2xl">
+              </div>
+            </div>
+
+            <!-- Best Sellers -->
+            <div class="space-y-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-2xl font-black text-slate-900 dark:text-white">Global Best Sellers</h2>
+                  <p class="text-slate-500 dark:text-slate-400 text-sm">Most purchased items globally this month</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">${bestSellersGrid}</div>
+            </div>
+          </section>
+
+          <!-- Trust Badges -->
+          <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-b border-slate-100 dark:border-slate-800">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+              <div class="flex items-start gap-4">
+                <div class="p-3 bg-indigo-50 dark:bg-indigo-950/50 rounded-xl text-indigo-600 dark:text-indigo-400 flex-shrink-0">
+                  <i data-lucide="truck" class="w-6 h-6"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-950 dark:text-white text-base">Free Global Shipping</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Complimentary standard courier transit on absolute premium purchases.</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="p-3 bg-indigo-50 dark:bg-indigo-950/50 rounded-xl text-indigo-600 dark:text-indigo-400 flex-shrink-0">
+                  <i data-lucide="shield" class="w-6 h-6"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-950 dark:text-white text-base">Secure Checkout Vault</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Encrypted token gateways ensuring absolute card detail preservation.</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="p-3 bg-indigo-50 dark:bg-indigo-950/50 rounded-xl text-indigo-600 dark:text-indigo-400 flex-shrink-0">
+                  <i data-lucide="award" class="w-6 h-6"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-950 dark:text-white text-base">Premium Authenticity</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Direct warehouse sources assuring pristine manufacturer product batches.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      `;
+    }
+
+    // 2. SHOP LISTING VIEW (WITH ADVANCED SIDEBAR FILTERS)
+    function renderShop(container) {
+      // Calculate active filters in JavaScript
+      const uniqueBrands = ['All', ...new Set(state.products.map(p => p.brand))];
+      
+      const filtered = state.products.filter(p => {
+        const matchSearch = p.title.toLowerCase().includes(state.searchTerm.toLowerCase()) || 
+                            p.description.toLowerCase().includes(state.searchTerm.toLowerCase());
+        const matchCat = state.selectedCategory === 'All' || p.category === state.selectedCategory;
+        const finalPrice = p.price * (1 - p.discount / 100);
+        const matchPrice = finalPrice >= state.priceRange[0] && finalPrice <= state.priceRange[1];
+        const matchBrand = state.selectedBrand === 'All' || p.brand === state.selectedBrand;
+        const matchRating = p.rating >= state.minRating;
+        return matchSearch && matchCat && matchPrice && matchBrand && matchRating;
+      }).sort((a, b) => {
+        const finalA = a.price * (1 - a.discount / 100);
+        const finalB = b.price * (1 - b.discount / 100);
+        if (state.sortBy === 'low-high') return finalA - finalB;
+        if (state.sortBy === 'high-low') return finalB - finalA;
+        if (state.sortBy === 'newest') return b.id - a.id;
+        return b.rating - a.rating; // popular fallback
+      });
+
+      // Categories Sidebar markup
+      let categoriesMarkup = '';
+      CATEGORIES.forEach(cat => {
+        categoriesMarkup += `
+          <button onclick="state.selectedCategory='${cat}'; renderActiveView()" class="text-left px-3 py-1.5 rounded-lg text-sm transition-colors ${state.selectedCategory === cat ? 'bg-indigo-600 text-white font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}">
+            ${cat}
+          </button>
+        `;
+      });
+
+      // Brand dropdown options markup
+      let brandOptions = '';
+      uniqueBrands.forEach(brand => {
+        brandOptions += `<option value="${brand}" ${state.selectedBrand === brand ? 'selected' : ''}>${brand}</option>`;
+      });
+
+      // Render catalog cards
+      let catalogCards = '';
+      if (state.viewMode === 'grid') {
+        catalogCards += `<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">`;
+        filtered.forEach(p => {
+          catalogCards += buildProductCardHTML(p);
+        });
+        catalogCards += `</div>`;
+      } else {
+        // List View Mode
+        catalogCards += `<div class="space-y-4">`;
+        filtered.forEach(p => {
+          const finalP = p.price * (1 - p.discount / 100);
+          catalogCards += `
+            <div class="flex flex-col sm:flex-row gap-6 p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow items-start sm:items-center relative">
+              <img src="${p.image}" alt="${p.title}" class="w-full sm:w-40 h-40 object-cover rounded-xl bg-slate-50 flex-shrink-0">
+              <div class="flex-1 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${p.category}</span>
+                  <span class="text-xs text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">In Stock (${p.stock})</span>
+                </div>
+                <h4 onclick="appActions.viewProductDetail(${p.id})" class="font-extrabold text-slate-900 dark:text-white text-lg hover:text-indigo-600 transition-colors cursor-pointer">${p.title}</h4>
+                ${getStarRatingHTML(p.rating, p.reviewsCount)}
+                <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm line-clamp-2">${p.description}</p>
+              </div>
+              <div class="w-full sm:w-40 flex flex-col justify-center space-y-3">
+                <div>
+                  <div class="text-xl font-black text-slate-900 dark:text-white">$${finalP.toFixed(2)}</div>
+                  ${p.discount > 0 ? `<span class="text-xs text-rose-500 font-bold bg-rose-50 dark:bg-rose-950/40 px-1.5 py-0.5 rounded">-${p.discount}%</span>` : ''}
+                </div>
+                <button onclick="appActions.viewProductDetail(${p.id})" class="w-full py-2 bg-slate-900 dark:bg-white dark:text-slate-950 text-white font-bold rounded-xl text-xs hover:bg-indigo-600 transition-colors">
+                  View Details
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        catalogCards += `</div>`;
+      }
+
+      container.innerHTML = `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+          <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6">
+            <span class="cursor-pointer hover:underline" onclick="appActions.setView('home')">Home</span>
+            <i data-lucide="chevron-right" class="w-3 h-3"></i>
+            <span class="font-bold text-indigo-600 dark:text-indigo-400">Shop</span>
+          </div>
+
+          <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- Sidebar filters -->
+            <aside class="w-full lg:w-64 space-y-6 flex-shrink-0 lg:sticky lg:top-24 h-fit bg-white dark:bg-slate-950">
+              <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+                <h3 class="font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                  <i data-lucide="sliders-horizontal" class="w-4 h-4 text-indigo-600"></i> Filters
+                </h3>
+                <button onclick="clearAllFilters()" class="text-xs font-semibold text-rose-500 hover:underline">Clear All</button>
+              </div>
+
+              <!-- Search -->
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Search</label>
+                <div class="relative">
+                  <input 
+                    id="sidebar-search"
+                    type="text" 
+                    placeholder="Product title..." 
+                    value="${state.searchTerm}"
+                    oninput="state.searchTerm=this.value; renderActiveView()"
+                    class="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-100 dark:border-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  />
+                  <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                </div>
+              </div>
+
+              <!-- Categories -->
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Categories</label>
+                <div class="flex flex-col gap-1.5">${categoriesMarkup}</div>
+              </div>
+
+              <!-- Price -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Max Price</label>
+                  <span class="text-sm font-bold text-slate-800 dark:text-white">$${state.priceRange[1]}</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="2000" 
+                  step="50"
+                  value="${state.priceRange[1]}" 
+                  oninput="state.priceRange=[0, parseFloat(this.value)]; renderActiveView()"
+                  class="w-full h-1 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                />
+              </div>
+
+              <!-- Brand -->
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Brand</label>
+                <select onchange="state.selectedBrand=this.value; renderActiveView()" class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-sm">
+                  ${brandOptions}
+                </select>
+              </div>
+
+              <!-- Rating -->
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Minimum Rating</label>
+                <div class="flex flex-col gap-1.5">
+                  ${[4,3,2,1].map(stars => `
+                    <button onclick="state.minRating=${stars}; renderActiveView()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${state.minRating === stars ? 'bg-slate-100 dark:bg-slate-800 font-bold border-l-4 border-indigo-600' : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'}">
+                      ${getStarRatingHTML(stars)} <span class="text-xs">& Up</span>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            </aside>
+
+            <!-- Catalog Panel -->
+            <section class="flex-1 space-y-6">
+              
+              <!-- Top bar panel -->
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+                <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                  Found <span class="text-indigo-600 dark:text-indigo-400">${filtered.length}</span> luxury goods
+                </p>
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                  
+                  <!-- Sort -->
+                  <div class="flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold">
+                    <i data-lucide="arrow-up-down" class="w-3.5 h-3.5 text-slate-400"></i>
+                    <select onchange="state.sortBy=this.value; renderActiveView()" class="bg-transparent focus:outline-none text-slate-700 dark:text-slate-200">
+                      <option value="popular" ${state.sortBy === 'popular' ? 'selected' : ''}>Most Popular</option>
+                      <option value="low-high" ${state.sortBy === 'low-high' ? 'selected' : ''}>Price: Low to High</option>
+                      <option value="high-low" ${state.sortBy === 'high-low' ? 'selected' : ''}>Price: High to Low</option>
+                      <option value="newest" ${state.sortBy === 'newest' ? 'selected' : ''}>New Arrivals</option>
+                    </select>
+                  </div>
+
+                  <!-- Grid/List switches -->
+                  <div class="flex items-center gap-1 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 p-1 rounded-xl">
+                    <button onclick="state.viewMode='grid'; renderActiveView()" class="p-1.5 rounded-lg transition-colors ${state.viewMode === 'grid' ? 'bg-slate-100 dark:bg-slate-800 text-indigo-600' : 'text-slate-400'}">
+                      <i data-lucide="grid" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="state.viewMode='list'; renderActiveView()" class="p-1.5 rounded-lg transition-colors ${state.viewMode === 'list' ? 'bg-slate-100 dark:bg-slate-800 text-indigo-600' : 'text-slate-400'}">
+                      <i data-lucide="list" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Product Display -->
+              ${filtered.length === 0 ? `
+                <div class="flex flex-col items-center justify-center text-center py-24 space-y-4">
+                  <div class="p-4 bg-rose-50 dark:bg-rose-950/20 text-rose-500 rounded-full">
+                    <i data-lucide="alert-circle" class="w-12 h-12"></i>
+                  </div>
+                  <h3 class="text-xl font-black text-slate-900 dark:text-white">No products match your criteria</h3>
+                  <p class="text-slate-500 dark:text-slate-400 text-sm max-w-md">Try widening your price bars or searching for broader terms.</p>
+                  <button onclick="clearAllFilters()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-md">Reset Store Settings</button>
+                </div>
+              ` : catalogCards}
+
+            </section>
+          </div>
+        </div>
+      `;
+    }
+
+    function clearAllFilters() {
+      state.searchTerm = '';
+      state.selectedCategory = 'All';
+      state.priceRange = [0, 2000];
+      state.selectedBrand = 'All';
+      state.minRating = 0;
+      state.sortBy = 'popular';
+      renderActiveView();
+    }
+
+    // 3. PRODUCT DETAILS VIEW
+    function renderProductDetail(container) {
+      const activeProduct = state.products.find(p => p.id === state.activeProductId) || state.products[0];
+      const finalPrice = activeProduct.price * (1 - activeProduct.discount / 100);
+      const isWishlisted = state.wishlist.some(item => item.id === activeProduct.id);
+
+      // Similarity recommendation
+      const recommended = state.products
+        .filter(p => p.category === activeProduct.category && p.id !== activeProduct.id)
+        .slice(0, 4);
+
+      // Render specs list HTML
+      let specsHTML = '';
+      Object.entries(activeProduct.specs || {}).forEach(([key, val]) => {
+        specsHTML += `
+          <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+            <span class="text-xs text-slate-400 block font-semibold">${key}</span>
+            <span class="text-sm font-extrabold text-slate-800 dark:text-white">${val}</span>
+          </div>
+        `;
+      });
+      if (specsHTML === '') specsHTML = '<p class="text-xs text-slate-400 italic">No custom specs configured.</p>';
+
+      // Render reviews HTML
+      let reviewsHTML = '';
+      (activeProduct.reviews || []).forEach(r => {
+        reviewsHTML += `
+          <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-1">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-800 dark:text-slate-100">${r.user}</span>
+              <span class="text-slate-400">${r.date}</span>
+            </div>
+            ${getStarRatingHTML(r.rating)}
+            <p class="text-xs text-slate-600 dark:text-slate-300 italic">"${r.comment}"</p>
+          </div>
+        `;
+      });
+      if (reviewsHTML === '') reviewsHTML = '<p class="text-xs text-slate-400 italic">No reviews submitted yet.</p>';
+
+      container.innerHTML = `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 animate-fade-in">
+          
+          <!-- Breadcrumb -->
+          <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+            <span class="cursor-pointer hover:underline" onclick="appActions.setView('home')">Home</span>
+            <i data-lucide="chevron-right" class="w-3 h-3"></i>
+            <span class="cursor-pointer hover:underline" onclick="appActions.setView('shop')">Shop</span>
+            <i data-lucide="chevron-right" class="w-3 h-3"></i>
+            <span class="font-bold text-indigo-600 dark:text-indigo-400 truncate max-w-xs">${activeProduct.title}</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            
+            <!-- Zoom Image Display -->
+            <div class="space-y-4">
+              <div class="relative pt-[90%] bg-slate-50 dark:bg-slate-950 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 group">
+                <img src="${activeProduct.image}" alt="${activeProduct.title}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-110 cursor-zoom-in">
+              </div>
+              <p class="text-center text-xs text-slate-400">Hover photo inside limits for fine detail scaling</p>
+            </div>
+
+            <!-- Details Block -->
+            <div class="space-y-6">
+              <div class="space-y-2">
+                <span class="px-3 py-1 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase rounded-lg">${activeProduct.category}</span>
+                <h1 class="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white leading-tight">${activeProduct.title}</h1>
+                <div class="flex items-center gap-4">
+                  ${getStarRatingHTML(activeProduct.rating, activeProduct.reviewsCount)}
+                  <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">
+                    ${activeProduct.stock > 0 ? `In Stock (${activeProduct.stock})` : 'Out Of Stock'}
+                  </span>
+                </div>
+              </div>
+
+              <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
+                <div class="flex items-baseline gap-3">
+                  <span class="text-3xl font-black text-slate-950 dark:text-white">$${finalPrice.toFixed(2)}</span>
+                  ${activeProduct.discount > 0 ? `
+                    <span class="text-base text-slate-400 line-through">$${activeProduct.price.toFixed(2)}</span>
+                    <span class="text-xs font-bold text-rose-500">(${activeProduct.discount}% Off)</span>
+                  ` : ''}
+                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">${activeProduct.description}</p>
+              </div>
+
+              <!-- Quantity Selector and CTA Grid -->
+              <div class="flex flex-col sm:flex-row sm:items-center gap-4 pt-4">
+                <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Quantity</label>
+                  <div class="flex items-center gap-2 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl w-fit">
+                    <button onclick="changeDetailQty(-1)" class="p-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
+                      <i data-lucide="minus" class="w-4 h-4"></i>
+                    </button>
+                    <span id="detail-qty" class="font-bold px-3 text-slate-900 dark:text-white">1</span>
+                    <button onclick="changeDetailQty(1, ${activeProduct.stock})" class="p-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
+                      <i data-lucide="plus" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="flex-1 flex gap-2">
+                  <button onclick="appActions.addToCart(${activeProduct.id}, parseInt(document.getElementById('detail-qty').textContent))" ${activeProduct.stock <= 0 ? 'disabled' : ''} class="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="shopping-cart" class="w-4 h-4"></i> Add To Cart
+                  </button>
+                  <button onclick="appActions.toggleWishlist(${activeProduct.id})" class="p-3 border rounded-xl transition-all ${isWishlisted ? 'border-rose-500 bg-rose-500/10 text-rose-500' : 'border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500'}">
+                    <i data-lucide="heart" class="w-5 h-5 fill-current"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Tabs Configuration -->
+              <div class="border-t border-slate-100 dark:border-slate-800 pt-6">
+                <div class="flex gap-4 border-b border-slate-100 dark:border-slate-800 pb-2 mb-4">
+                  <button id="tab-btn-specs" onclick="switchDetailTab('specs')" class="pb-2 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600">Specifications</button>
+                  <button id="tab-btn-reviews" onclick="switchDetailTab('reviews')" class="pb-2 text-sm font-bold border-b-2 border-transparent text-slate-500">Customer Reviews</button>
+                </div>
+
+                <!-- Specs panel -->
+                <div id="tab-panel-specs" class="grid grid-cols-2 gap-4">${specsHTML}</div>
+
+                <!-- Reviews panel -->
+                <div id="tab-panel-reviews" class="hidden space-y-6">
+                  <div class="space-y-4 max-h-60 overflow-y-auto">${reviewsHTML}</div>
+                  
+                  <!-- Form -->
+                  <form onsubmit="handleNewReviewForm(event, ${activeProduct.id})" class="p-4 bg-indigo-50/50 dark:bg-indigo-950/20 rounded-xl space-y-3">
+                    <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Leave a Review</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                      <input id="rev-form-name" type="text" placeholder="Your Name" class="p-2 bg-white dark:bg-slate-900 text-xs border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none" required>
+                      <select id="rev-form-rating" class="p-2 bg-white dark:bg-slate-900 text-xs border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none font-bold">
+                        <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                        <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                        <option value="3">⭐⭐⭐ 3 Stars</option>
+                        <option value="2">⭐⭐ 2 Stars</option>
+                        <option value="1">⭐ 1 Star</option>
+                      </select>
+                    </div>
+                    <textarea id="rev-form-text" placeholder="Write your constructive critique..." rows="2" class="w-full p-2 bg-white dark:bg-slate-900 text-xs border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none" required></textarea>
+                    <button type="submit" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-[11px] uppercase">Post Review</button>
+                  </form>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Recommendations list -->
+          <section class="space-y-6 pt-12 border-t border-slate-100 dark:border-slate-800">
+            <div>
+              <h3 class="text-xl font-extrabold text-slate-900 dark:text-white">Similar & Recommended Products</h3>
+              <p class="text-slate-500 dark:text-slate-400 text-xs">Based on category relevance</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              ${recommended.map(p => buildProductCardHTML(p)).join('')}
+            </div>
+          </section>
+
+        </div>
+      `;
+    }
+
+    // Interactive quantity support for detail state
+    function changeDetailQty(direction, limit = 999) {
+      const qtyEl = document.getElementById('detail-qty');
+      if (!qtyEl) return;
+      let currentVal = parseInt(qtyEl.textContent);
+      currentVal += direction;
+      if (currentVal < 1) currentVal = 1;
+      if (currentVal > limit) currentVal = limit;
+      qtyEl.textContent = currentVal;
+    }
+
+    // Toggle reviews vs specs inside details layout
+    function switchDetailTab(tab) {
+      const btnSpecs = document.getElementById('tab-btn-specs');
+      const btnRev = document.getElementById('tab-btn-reviews');
+      const panelSpecs = document.getElementById('tab-panel-specs');
+      const panelRev = document.getElementById('tab-panel-reviews');
+
+      if (tab === 'specs') {
+        btnSpecs.className = "pb-2 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600";
+        btnRev.className = "pb-2 text-sm font-bold border-b-2 border-transparent text-slate-500";
+        panelSpecs.classList.remove('hidden');
+        panelRev.classList.add('hidden');
+      } else {
+        btnRev.className = "pb-2 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600";
+        btnSpecs.className = "pb-2 text-sm font-bold border-b-2 border-transparent text-slate-500";
+        panelSpecs.classList.add('hidden');
+        panelRev.classList.remove('hidden');
+      }
+    }
+
+    // Capture reviews
+    function handleNewReviewForm(e, prodId) {
+      e.preventDefault();
+      const name = document.getElementById('rev-form-name').value;
+      const rating = parseInt(document.getElementById('rev-form-rating').value);
+      const text = document.getElementById('rev-form-text').value;
+
+      const product = state.products.find(p => p.id === prodId);
+      if (product) {
+        const newRev = {
+          id: Date.now(),
+          user: name,
+          rating: rating,
+          date: new Date().toISOString().split('T')[0],
+          comment: text
+        };
+        product.reviews = [newRev, ...(product.reviews || [])];
+        product.reviewsCount = (product.reviewsCount || 0) + 1;
+        product.rating = parseFloat(((product.rating * 4 + rating) / 5).toFixed(1));
+        
+        showToast("Review submitted successfully!", "success");
+        saveState();
+        renderActiveView();
+      }
+    }
+
+    // 4. SHOPPING CART VIEW
+    function renderCart(container) {
+      if (state.cart.length === 0) {
+        container.innerHTML = `
+          <div class="max-w-md mx-auto py-24 px-4 text-center space-y-6 animate-fade-in">
+            <div class="w-20 h-20 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-500 rounded-full flex items-center justify-center mx-auto shadow-lg">
+              <i data-lucide="shopping-cart" class="w-10 h-10"></i>
+            </div>
+            <div class="space-y-2">
+              <h2 class="text-2xl font-black text-slate-950 dark:text-white">Your Shopping Cart is Empty</h2>
+              <p class="text-slate-500 dark:text-slate-400 text-sm">Looks like you haven't decided on any of our luxury pieces yet.</p>
+            </div>
+            <button onclick="state.selectedCategory='All'; appActions.setView('shop')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-transform active:scale-95 shadow-lg">
+              Return To Market Catalog
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      const subtotal = state.cart.reduce((acc, curr) => acc + (curr.price * (1 - curr.discount / 100)) * curr.quantity, 0);
+      const tax = subtotal * 0.08;
+      const isFreeShip = subtotal > 150 || (state.appliedPromo && state.appliedPromo.freeShipping);
+      const shipping = subtotal > 0 && !isFreeShip ? 15.00 : 0.00;
+      const promoDiscount = (state.appliedPromo && state.appliedPromo.discountPercent) ? subtotal * (state.appliedPromo.discountPercent / 100) : 0;
+      const grandTotal = subtotal + tax + shipping - promoDiscount;
+
+      let cartItemsList = '';
+      state.cart.forEach(item => {
+        const itemPrice = item.price * (1 - item.discount / 100);
+        cartItemsList += `
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center gap-4">
+              <img src="${item.image}" alt="${item.title}" class="w-20 h-20 object-cover rounded-xl flex-shrink-0 bg-slate-50">
+              <div class="space-y-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${item.category}</span>
+                <h4 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base line-clamp-1">${item.title}</h4>
+                <div class="flex items-baseline gap-2">
+                  <span class="font-extrabold text-slate-900 dark:text-white">$${itemPrice.toFixed(2)}</span>
+                  ${item.discount > 0 ? `<span class="text-[10px] text-rose-500 line-through">$${item.price.toFixed(2)}</span>` : ''}
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between w-full sm:w-auto gap-4">
+              <div class="flex items-center gap-1.5 border border-slate-200 dark:border-slate-700 p-1 rounded-xl bg-slate-50 dark:bg-slate-800">
+                <button onclick="appActions.updateCartQty(${item.id}, -1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 rounded">
+                  <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+                </button>
+                <span class="font-bold text-xs sm:text-sm px-2 text-slate-900 dark:text-white">${item.quantity}</span>
+                <button onclick="appActions.updateCartQty(${item.id}, 1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 rounded">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <div class="text-right flex items-center sm:flex-col gap-2">
+                <span class="text-sm font-black text-slate-950 dark:text-white">$${(itemPrice * item.quantity).toFixed(2)}</span>
+                <button onclick="appActions.removeFromCart(${item.id})" class="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-xl">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
+          <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">Shopping Cart</h1>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-4">${cartItemsList}</div>
+
+            <!-- Order pricing -->
+            <div class="space-y-6">
+              <div class="bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-2xl space-y-6">
+                <h3 class="font-extrabold text-slate-950 dark:text-white text-lg">Order Summary</h3>
+                <div class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+                  <div class="flex justify-between">
+                    <span>Subtotal</span>
+                    <span class="font-bold text-slate-900 dark:text-white">$${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Estimated Tax (8%)</span>
+                    <span class="font-bold text-slate-900 dark:text-white">$${tax.toFixed(2)}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Shipping Transit</span>
+                    <span class="font-bold text-slate-900 dark:text-white">${shipping === 0 ? '<span class="text-emerald-500">FREE</span>' : `$${shipping.toFixed(2)}`}</span>
+                  </div>
+                  ${state.appliedPromo ? `
+                    <div class="flex justify-between text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/40 p-2.5 rounded-lg text-xs">
+                      <span>Discount Code Applied (${state.appliedPromo.code}):</span>
+                      <span>-$${promoDiscount.toFixed(2)}</span>
+                    </div>
+                  ` : ''}
+                </div>
+
+                <div class="space-y-2 pt-4 border-t border-slate-200 dark:border-slate-700">
+                  <label class="text-xs font-bold text-slate-400 uppercase tracking-widest block">Apply Promo Coupon</label>
+                  <div class="flex gap-2">
+                    <input id="promo-input" type="text" placeholder="e.g. SUPER30, SAVE10" class="flex-1 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 text-xs focus:outline-none">
+                    <button onclick="appActions.applyCoupon()" class="px-4 py-1.5 bg-slate-900 dark:bg-white dark:text-slate-900 text-xs font-bold rounded-lg uppercase">Apply</button>
+                  </div>
+                  <p class="text-[10px] text-slate-400">Available Coupons: SAVE10, SUPER30</p>
+                </div>
+
+                <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-between items-baseline">
+                  <span class="font-bold text-slate-900 dark:text-white text-base">Grand Total</span>
+                  <span class="font-black text-slate-950 dark:text-white text-2xl">$${grandTotal.toFixed(2)}</span>
+                </div>
+
+                <button onclick="appActions.setView('checkout')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-transform active:scale-95 shadow-lg shadow-indigo-600/20 uppercase tracking-wider">
+                  Proceed to Checkout Gateway
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 5. CHECKOUT VIEWS BLOCK
+    let paymentMethod = 'card'; // Global active checkout payment flag
+    function renderCheckout(container) {
+      const subtotal = state.cart.reduce((acc, curr) => acc + (curr.price * (1 - curr.discount / 100)) * curr.quantity, 0);
+      const tax = subtotal * 0.08;
+      const isFreeShip = subtotal > 150 || (state.appliedPromo && state.appliedPromo.freeShipping);
+      const shipping = subtotal > 0 && !isFreeShip ? 15.00 : 0.00;
+      const promoDiscount = (state.appliedPromo && state.appliedPromo.discountPercent) ? subtotal * (state.appliedPromo.discountPercent / 100) : 0;
+      const grandTotal = subtotal + tax + shipping - promoDiscount;
+
+      let addressGrid = '';
+      state.addresses.forEach(addr => {
+        addressGrid += `
+          <div onclick="document.getElementById('addr-radio-${addr.id}').click()" class="p-4 border rounded-xl cursor-pointer transition-all space-y-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] font-black uppercase text-indigo-600 tracking-wider bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded-md">${addr.type}</span>
+              <input type="radio" id="addr-radio-${addr.id}" name="shipping-address-select" value="${addr.id}" checked class="accent-indigo-600">
+            </div>
+            <div class="font-bold text-sm text-slate-900 dark:text-white">${addr.name}</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">${addr.line1}, ${addr.city} - ${addr.zip}</div>
+            <div class="text-[11px] text-slate-400">Phone: ${addr.phone}</div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
+          <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">Secure Checkout Vault</h1>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div class="lg:col-span-2 space-y-8">
+              
+              <!-- Address -->
+              <div class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-lg font-extrabold text-slate-950 dark:text-white flex items-center gap-2">
+                    <i data-lucide="map-pin" class="w-5 h-5 text-indigo-600"></i> Shipping & Delivery Destination
+                  </h3>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">${addressGrid}</div>
+              </div>
+
+              <!-- Payments selection -->
+              <div class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-6">
+                <h3 class="text-lg font-extrabold text-slate-950 dark:text-white flex items-center gap-2">
+                  <i data-lucide="shield" class="w-5 h-5 text-indigo-600"></i> Secure Payment Gateway
+                </h3>
+                <div class="flex flex-col sm:flex-row gap-4">
+                  <button onclick="switchPaymentMethod('card')" class="flex-1 p-4 border rounded-xl flex items-center gap-3 bg-white dark:bg-slate-800 ${paymentMethod === 'card' ? 'border-indigo-600 ring-1 ring-indigo-500' : 'border-slate-200 dark:border-slate-700'}">
+                    <span class="text-lg">💳</span>
+                    <div class="text-left">
+                      <div class="text-sm font-bold text-slate-900 dark:text-white">Credit / Debit Card</div>
+                      <div class="text-[10px] text-slate-400">Visa, Mastercard, Amex</div>
+                    </div>
+                  </button>
+                  <button onclick="switchPaymentMethod('upi')" class="flex-1 p-4 border rounded-xl flex items-center gap-3 bg-white dark:bg-slate-800 ${paymentMethod === 'upi' ? 'border-indigo-600 ring-1 ring-indigo-500' : 'border-slate-200 dark:border-slate-700'}">
+                    <span class="text-lg">📱</span>
+                    <div class="text-left">
+                      <div class="text-sm font-bold text-slate-900 dark:text-white">UPI Gateway</div>
+                      <div class="text-[10px] text-slate-400">GPay, PhonePe</div>
+                    </div>
+                  </button>
+                </div>
+
+                <!-- Conditional payment details -->
+                <div id="payment-credentials-block" class="space-y-3 p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 max-w-md">
+                  ${paymentMethod === 'card' ? `
+                    <input id="card-num" type="text" placeholder="Card Number (e.g. 1111 2222 3333)" class="w-full p-2.5 border rounded-lg text-xs dark:bg-slate-900" required>
+                    <div class="grid grid-cols-2 gap-3">
+                      <input id="card-exp" type="text" placeholder="MM/YY" class="p-2.5 border rounded-lg text-xs dark:bg-slate-900" required>
+                      <input id="card-cvv" type="password" placeholder="CVV" maxlength="3" class="p-2.5 border rounded-lg text-xs dark:bg-slate-900" required>
+                    </div>
+                  ` : `
+                    <input id="upi-string" type="text" placeholder="username@upi" class="w-full p-2.5 border rounded-lg text-xs dark:bg-slate-900" required>
+                  `}
+                </div>
+              </div>
+            </div>
+
+            <!-- Sticky billing summary -->
+            <div class="bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-2xl h-fit space-y-6">
+              <h3 class="font-extrabold text-slate-950 dark:text-white text-lg">Order Items Summary</h3>
+              <div class="space-y-3 max-h-48 overflow-y-auto">
+                ${state.cart.map(item => `
+                  <div class="flex gap-3 justify-between items-center text-xs text-slate-600 dark:text-slate-300">
+                    <span class="truncate flex-1 font-semibold">${item.title} <span class="text-slate-400">x${item.quantity}</span></span>
+                    <span class="font-extrabold text-slate-900 dark:text-white">$${((item.price * (1 - item.discount / 100)) * item.quantity).toFixed(2)}</span>
+                  </div>
+                `).join('')}
+              </div>
+
+              <div class="border-t border-slate-200 dark:border-slate-700 pt-4 flex justify-between items-baseline">
+                <span class="font-bold text-slate-900 dark:text-white text-sm">Total</span>
+                <span class="font-black text-slate-950 dark:text-white text-xl">$${grandTotal.toFixed(2)}</span>
+              </div>
+
+              <button onclick="handlePlaceOrder()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow-md uppercase tracking-wider">
+                Authorize Payment & Complete
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function switchPaymentMethod(method) {
+      paymentMethod = method;
+      renderCheckout(document.getElementById('app-viewport'));
+      lucide.createIcons();
+    }
+
+    function handlePlaceOrder() {
+      // Basic checkout validation
+      if (paymentMethod === 'card') {
+        const num = document.getElementById('card-num').value;
+        const exp = document.getElementById('card-exp').value;
+        const cvv = document.getElementById('card-cvv').value;
+        if (!num || !exp || !cvv) {
+          showToast("Card validation failed. Please fill all fields.", "error");
+          return;
+        }
+      } else {
+        const upi = document.getElementById('upi-string').value;
+        if (!upi || !upi.includes('@')) {
+          showToast("Please provide a valid UPI handle.", "error");
+          return;
+        }
+      }
+
+      const totalValue = state.cart.reduce((acc, curr) => acc + (curr.price * (1 - curr.discount / 100)) * curr.quantity, 0) * 1.08;
+
+      const order = {
+        id: `ORD-${Math.floor(10000 + Math.random() * 90000)}`,
+        date: new Date().toISOString().split('T')[0],
+        total: parseFloat(totalValue.toFixed(2)),
+        status: 'Processing',
+        items: state.cart.map(i => ({ id: i.id, title: i.title, price: i.price * (1 - i.discount/100), quantity: i.quantity }))
+      };
+
+      state.orders.push(order);
+      state.cart = [];
+      showToast("Order dispatched successfully!", "success");
+      saveState();
+      appActions.setView('profile');
+    }
+
+    // 6. WISHLIST VIEW RENDERING
+    function renderWishlist(container) {
+      if (state.wishlist.length === 0) {
+        container.innerHTML = `
+          <div class="max-w-md mx-auto py-24 px-4 text-center space-y-6 animate-fade-in">
+            <div class="w-20 h-20 bg-rose-50 dark:bg-rose-950/40 text-rose-500 rounded-full flex items-center justify-center mx-auto shadow-lg">
+              <i data-lucide="heart" class="w-10 h-10 fill-current"></i>
+            </div>
+            <div class="space-y-2">
+              <h2 class="text-2xl font-black text-slate-950 dark:text-white">Your Wishlist is Empty</h2>
+              <p class="text-slate-500 dark:text-slate-400 text-sm">Save items to purchase them later by pressing the heart icon.</p>
+            </div>
+            <button onclick="state.selectedCategory='All'; appActions.setView('shop')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-transform active:scale-95 shadow-lg">
+              Explore Catalog items
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      let gridHTML = '';
+      state.wishlist.forEach(p => {
+        gridHTML += buildProductCardHTML(p);
+      });
+
+      container.innerHTML = `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in">
+          <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">My Favorites Saved Wishlist</h1>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">${gridHTML}</div>
+        </div>
+      `;
+    }
+
+    // 7. USER PROFILE DASHBOARD VIEW
+    let authFormState = { email: '', password: '', isRegister: false };
+    function renderProfile(container) {
+      if (!state.currentUser) {
+        // Sign-in UI block
+        container.innerHTML = `
+          <div class="max-w-md mx-auto py-16 px-4 animate-fade-in">
+            <div class="bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-8 rounded-3xl space-y-6 shadow-xl">
+              <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 rounded-full flex items-center justify-center mx-auto text-xl">🛡️</div>
+                <h2 class="text-2xl font-black text-slate-950 dark:text-white">Sign In To Sphere</h2>
+                <p class="text-xs text-slate-400">Enter credentials to monitor stats or edit database catalogs</p>
+              </div>
+
+              <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div class="space-y-1.5">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Email Address</label>
+                  <input id="auth-email" type="email" placeholder="customer@example.com (or admin@example.com)" class="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg text-xs" required>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Password</label>
+                  <input id="auth-password" type="password" placeholder="••••••••" class="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg text-xs" required>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-lg">Authenticate Credentials</button>
+              </form>
+
+              <div class="p-3 bg-indigo-50 dark:bg-indigo-950/20 text-[10px] text-slate-500 rounded-lg">
+                <strong>Pro Tip:</strong> Signing in with email containing <code class="text-indigo-600 font-bold">"admin"</code> grants automatic access to the catalog CRUD Admin Dashboard.
+              </div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // Profile View (Authenticated client)
+      let ordersRows = '';
+      state.orders.forEach(o => {
+        ordersRows += `
+          <div class="p-5 border border-slate-100 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 space-y-4">
+            <div class="flex justify-between items-center text-xs flex-wrap gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div>
+                <span class="text-slate-400">Order ID: </span>
+                <span class="font-extrabold text-slate-950 dark:text-white">${o.id}</span>
+              </div>
+              <div>
+                <span class="text-slate-400">Date: </span>
+                <span class="font-bold text-slate-600 dark:text-slate-300">${o.date}</span>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full font-bold text-[10px] uppercase bg-emerald-500/10 text-emerald-500">${o.status}</span>
+            </div>
+            <div class="space-y-2">
+              ${(o.items || []).map(it => `
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-semibold text-slate-700 dark:text-slate-300">${it.title} <code class="text-slate-400">x${it.quantity}</code></span>
+                  <span class="font-extrabold text-slate-950 dark:text-white">$${it.price.toFixed(2)}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+          <div class="flex flex-col md:flex-row gap-8 items-start">
+            
+            <!-- Info panel -->
+            <div class="w-full md:w-80 p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-6">
+              <div class="text-center space-y-3">
+                <div class="w-20 h-20 bg-indigo-600 text-white font-black text-2xl rounded-full flex items-center justify-center mx-auto shadow-lg shadow-indigo-600/20">
+                  ${state.currentUser.name[0].toUpperCase()}
+                </div>
+                <div>
+                  <h3 class="font-extrabold text-slate-900 dark:text-white text-lg">${state.currentUser.name}</h3>
+                  <p class="text-xs text-slate-400">${state.currentUser.email}</p>
+                </div>
+                ${state.currentUser.role === 'admin' ? `<span class="px-3 py-1 bg-rose-500/10 text-rose-500 font-bold rounded-full text-[10px] uppercase tracking-wider inline-block">Sphere Admin</span>` : ''}
+              </div>
+
+              <div class="flex flex-col gap-1.5 pt-4 border-t border-slate-200 dark:border-slate-800">
+                <button class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold bg-indigo-600 text-white">
+                  <i data-lucide="package" class="w-4 h-4"></i> Order History (${state.orders.length})
+                </button>
+                <button onclick="handleSignOut()" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20">
+                  <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
+                </button>
+              </div>
+            </div>
+
+            <!-- Detail panel -->
+            <div class="flex-1 w-full space-y-6">
+              <h2 class="text-xl font-black text-slate-950 dark:text-white">Order Tracking Portfolio</h2>
+              ${state.orders.length === 0 ? `
+                <div class="p-8 bg-slate-50 dark:bg-slate-900 border rounded-xl text-center">
+                  <p class="text-slate-400 text-xs">No orders placed yet.</p>
+                </div>
+              ` : ordersRows}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value;
+      const pass = document.getElementById('auth-password').value;
+      if (!email || !pass) return;
+
+      const isAdmin = email.toLowerCase().includes('admin');
+      state.currentUser = {
+        name: isAdmin ? 'Executive Admin' : 'Valued Customer',
+        email: email,
+        role: isAdmin ? 'admin' : 'user'
+      };
+
+      showToast(`Welcome back, ${state.currentUser.name}!`, "success");
+      saveState();
+      renderNavbar();
+      renderActiveView();
+    }
+
+    function handleSignOut() {
+      state.currentUser = null;
+      state.appliedPromo = null;
+      showToast("Signed out successfully.", "info");
+      saveState();
+      renderNavbar();
+      appActions.setView('home');
+    }
+
+    // 8. PRODUCT COMPARISON VIEW RENDERING
+    function renderCompare(container) {
+      if (state.compareList.length === 0) {
+        container.innerHTML = `
+          <div class="max-w-md mx-auto py-24 px-4 text-center space-y-6">
+            <div class="w-20 h-20 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-500 rounded-full flex items-center justify-center mx-auto shadow-lg">
+              <i data-lucide="arrow-left-right" class="w-10 h-10"></i>
+            </div>
+            <div class="space-y-2">
+              <h2 class="text-2xl font-black text-slate-950 dark:text-white">No Products Selected</h2>
+              <p class="text-slate-500 dark:text-slate-400 text-sm">Add up to 3 products to compare features side-by-side.</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      let comparisonColumns = '';
+      state.compareList.forEach(p => {
+        const finalPrice = p.price * (1 - p.discount / 100);
+        comparisonColumns += `
+          <div class="col-span-1 flex flex-col text-sm divide-y divide-slate-100 dark:divide-slate-800 relative">
+            <button onclick="appActions.toggleCompare(${p.id})" class="absolute top-2 right-2 p-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 rounded-full">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+
+            <div class="p-4 h-48 flex flex-col items-center justify-between">
+              <img src="${p.image}" alt="" class="w-20 h-20 object-cover rounded-xl bg-slate-50">
+              <div class="text-center font-bold text-slate-900 dark:text-white line-clamp-1 text-xs">${p.title}</div>
+              <button onclick="appActions.addToCart(${p.id})" class="px-3 py-1 bg-indigo-600 text-white text-[10px] uppercase font-bold rounded-lg">Add Cart</button>
+            </div>
+
+            <div class="p-4 h-16 flex items-center font-black text-slate-950 dark:text-white bg-slate-50 dark:bg-slate-900/50">
+              $${finalPrice.toFixed(2)} ${p.discount > 0 ? `<span class="ml-1.5 text-[9px] text-rose-500">-${p.discount}%</span>` : ''}
+            </div>
+
+            <div class="p-4 h-16 flex items-center text-slate-600 dark:text-slate-300">${p.category}</div>
+            <div class="p-4 h-16 flex items-center bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-300">${p.brand}</div>
+            
+            <div class="p-4 h-16 flex items-center">${getStarRatingHTML(p.rating)}</div>
+
+            <div class="p-4 h-32 flex flex-col justify-center bg-slate-50 dark:bg-slate-900/50 space-y-1 overflow-y-auto">
+              ${Object.entries(p.specs || {}).map(([key, val]) => `
+                <div class="text-[10px]">
+                  <strong class="text-slate-400">${key}:</strong> <span class="text-slate-700 dark:text-slate-200">${val}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">Side-by-Side Comparison</h1>
+            <p class="text-slate-500 text-sm">Evaluate up to 3 models simultaneously</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 border dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 overflow-hidden shadow-xl divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-800">
+            <div class="hidden md:flex flex-col text-xs font-bold text-slate-400 uppercase tracking-widest divide-y divide-slate-100 dark:divide-slate-800">
+              <div class="p-4 h-48 flex items-end">Product Image</div>
+              <div class="p-4 h-16 flex items-center bg-slate-50 dark:bg-slate-900">Retail price</div>
+              <div class="p-4 h-16 flex items-center">Category</div>
+              <div class="p-4 h-16 flex items-center bg-slate-50 dark:bg-slate-900">Brand</div>
+              <div class="p-4 h-16 flex items-center">Rating</div>
+              <div class="p-4 h-32 flex items-center bg-slate-50 dark:bg-slate-900">Specs</div>
+            </div>
+            ${comparisonColumns}
+          </div>
+        </div>
+      `;
+    }
+
+    // 9. ADMIN CRUD PANEL VIEWS RENDERING
+    let editingProductData = null; // Holds temporary item model for editing
+    function renderAdmin(container) {
+      if (!state.currentUser || state.currentUser.role !== 'admin') {
+        container.innerHTML = `
+          <div class="max-w-md mx-auto py-24 text-center space-y-4">
+            <h2 class="text-2xl font-black">Admin Access Required</h2>
+            <p class="text-slate-500">Log in with a administrative profile email identifier to access management tools.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let activeCatalogRows = '';
+      state.products.forEach(p => {
+        activeCatalogRows += `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 divide-y divide-slate-100 dark:divide-slate-800">
+            <td class="p-4 flex items-center gap-3">
+              <img src="${p.image}" class="w-10 h-10 object-cover rounded-lg flex-shrink-0">
+              <div>
+                <span class="font-bold text-slate-900 dark:text-white block">${p.title}</span>
+                <span class="text-[10px] text-slate-400">Brand: ${p.brand}</span>
+              </div>
+            </td>
+            <td class="p-4 font-semibold">${p.category}</td>
+            <td class="p-4 font-bold text-slate-900 dark:text-white">$${p.price.toFixed(2)} ${p.discount > 0 ? `<span class="text-rose-500 font-normal">(-${p.discount}%)</span>` : ''}</td>
+            <td class="p-4 font-bold">${p.stock} units</td>
+            <td class="p-4 text-right space-x-2">
+              <button onclick="handleAdminEditClick(${p.id})" class="p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 text-indigo-600 rounded-lg">
+                <i data-lucide="edit" class="w-4 h-4"></i>
+              </button>
+              <button onclick="handleAdminDeleteClick(${p.id})" class="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-rose-500 rounded-lg">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white flex items-center gap-2">📊 Admin Control Panel</h1>
+              <p class="text-slate-500 text-sm">Directly manage active database records</p>
+            </div>
+            <button id="toggle-form-btn" onclick="toggleAddProductForm()" class="px-4 py-2.5 bg-indigo-600 text-white font-bold rounded-xl text-xs uppercase shadow-md flex items-center gap-1.5">
+              <i data-lucide="plus" class="w-4 h-4"></i> Create Product Record
+            </button>
+          </div>
+
+          <!-- Live Form Add/Edit (Hidden by default unless toggled) -->
+          <div id="admin-crud-form-container" class="hidden animate-slide-in">
+            <form onsubmit="handleProductFormSubmit(event)" class="p-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl space-y-6 max-w-3xl">
+              <h3 id="form-action-title" class="text-lg font-black text-slate-950 dark:text-white">Create Product Record</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1.5 col-span-2">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Product Title</label>
+                  <input id="form-title" type="text" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs" required>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Base Retail Price ($)</label>
+                  <input id="form-price" type="number" step="0.01" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs" required>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Discount Percent (%)</label>
+                  <input id="form-discount" type="number" min="0" max="95" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs" required>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Category</label>
+                  <select id="form-category" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs">
+                    ${CATEGORIES.filter(c => c !== 'All').map(c => `<option value="${c}">${c}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Brand Name</label>
+                  <input id="form-brand" type="text" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs" required>
+                </div>
+                <div class="space-y-1.5 col-span-2">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Unsplash/External Image URL</label>
+                  <input id="form-image" type="text" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs" required>
+                </div>
+                <div class="space-y-1.5 col-span-2">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Description</label>
+                  <textarea id="form-desc" rows="3" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs" required></textarea>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Stock Limit Count</label>
+                  <input id="form-stock" type="number" min="0" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs" required>
+                </div>
+              </div>
+
+              <div class="flex gap-2">
+                <button type="submit" class="px-5 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold uppercase">Save Product</button>
+                <button type="button" onclick="closeCrudForm()" class="px-5 py-2 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold uppercase">Cancel</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Catalog Database Directory -->
+          <div class="space-y-4">
+            <h3 class="font-extrabold text-slate-950 dark:text-white">Active Product Directory</h3>
+            <div class="overflow-x-auto border dark:border-slate-800 rounded-2xl">
+              <table class="w-full text-left text-xs text-slate-500 divide-y divide-slate-100 dark:divide-slate-800">
+                <thead class="bg-slate-50 dark:bg-slate-900/50 text-slate-400 font-bold uppercase">
+                  <tr>
+                    <th class="p-4">Product Details</th>
+                    <th class="p-4">Category</th>
+                    <th class="p-4">Price</th>
+                    <th class="p-4">Stock</th>
+                    <th class="p-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-850 bg-white dark:bg-slate-900">
+                  ${activeCatalogRows}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+
+    function toggleAddProductForm() {
+      const container = document.getElementById('admin-crud-form-container');
+      const actionTitle = document.getElementById('form-action-title');
+      
+      editingProductData = null;
+      actionTitle.textContent = "Create Product Record";
+      
+      // Reset inputs
+      document.getElementById('form-title').value = '';
+      document.getElementById('form-price').value = '99.99';
+      document.getElementById('form-discount').value = '0';
+      document.getElementById('form-category').value = 'Electronics';
+      document.getElementById('form-brand').value = '';
+      document.getElementById('form-image').value = '';
+      document.getElementById('form-desc').value = '';
+      document.getElementById('form-stock').value = '10';
+
+      container.classList.toggle('hidden');
+    }
+
+    function closeCrudForm() {
+      document.getElementById('admin-crud-form-container').classList.add('hidden');
+    }
+
+    function handleAdminEditClick(id) {
+      const product = state.products.find(p => p.id === id);
+      if (!product) return;
+
+      editingProductData = product;
+      document.getElementById('admin-crud-form-container').classList.remove('hidden');
+      document.getElementById('form-action-title').textContent = `Edit Product: ${product.title}`;
+
+      document.getElementById('form-title').value = product.title;
+      document.getElementById('form-price').value = product.price;
+      document.getElementById('form-discount').value = product.discount;
+      document.getElementById('form-category').value = product.category;
+      document.getElementById('form-brand').value = product.brand;
+      document.getElementById('form-image').value = product.image;
+      document.getElementById('form-desc').value = product.description;
+      document.getElementById('form-stock').value = product.stock;
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function handleAdminDeleteClick(id) {
+      state.products = state.products.filter(p => p.id !== id);
+      showToast("Product deleted successfully.", "info");
+      saveState();
+      renderActiveView();
+    }
+
+    function handleProductFormSubmit(e) {
+      e.preventDefault();
+      const title = document.getElementById('form-title').value;
+      const price = parseFloat(document.getElementById('form-price').value);
+      const discount = parseInt(document.getElementById('form-discount').value);
+      const category = document.getElementById('form-category').value;
+      const brand = document.getElementById('form-brand').value;
+      const image = document.getElementById('form-image').value;
+      const desc = document.getElementById('form-desc').value;
+      const stock = parseInt(document.getElementById('form-stock').value);
+
+      if (editingProductData) {
+        // Edit record
+        editingProductData.title = title;
+        editingProductData.price = price;
+        editingProductData.discount = discount;
+        editingProductData.category = category;
+        editingProductData.brand = brand;
+        editingProductData.image = image;
+        editingProductData.description = desc;
+        editingProductData.stock = stock;
+        showToast("Product record updated!", "success");
+      } else {
+        // Create brand new item
+        const newProduct = {
+          id: Date.now(),
+          title,
+          price,
+          discount,
+          category,
+          brand,
+          description: desc,
+          image,
+          stock,
+          rating: 4.5,
+          reviewsCount: 0,
+          specs: {},
+          reviews: []
+        };
+        state.products.push(newProduct);
+        showToast("New product created!", "success");
+      }
+
+      saveState();
+      renderActiveView();
+    }
+
+    // ==========================================
+    // INITIALIZATION ROOT EXECUTIONS
+    // ==========================================
+    window.onload = function() {
+      renderNavbar();
+      renderActiveView();
+      renderFooter();
+    };
+  </script>
+</body>
+</html>
